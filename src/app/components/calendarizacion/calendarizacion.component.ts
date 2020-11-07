@@ -13,6 +13,14 @@ interface Aplicativo {
 })
 export class CalendarizacionComponent implements OnInit {
 
+  //cajas formulario
+
+  hora: boolean;
+  intervalo: boolean;
+  semana: boolean;
+  meses: boolean;
+  dias: boolean;
+
   // formulario 
   calendarizacionForm: FormGroup;
   form: FormGroup;
@@ -26,8 +34,10 @@ export class CalendarizacionComponent implements OnInit {
   interestFormGroup: FormGroup
   interests: any;
   selected: any;
+  periodicidad: any[];
   mesesDelAnnio: any[];
   diasDelMes: any[];
+  diasDelaSemana: any[];
 
   aplicativos: Aplicativo[] = [
     { idAplicativo: 'CUA', nombreAplicativo: 'Cuadratura' },
@@ -36,16 +46,19 @@ export class CalendarizacionComponent implements OnInit {
     { idAplicativo: 'Fox', nombreAplicativo: 'Wa-pa-pa-pa-pa-pa-pow!' },
   ];
 
-  periodicidad: Aplicativo[] = [
-    { idAplicativo: 'mensual', nombreAplicativo: 'Diario' },
-    { idAplicativo: 'Cat', nombreAplicativo: 'Semanal!' },
-    { idAplicativo: 'Cow', nombreAplicativo: 'Mensual!' },
-    { idAplicativo: 'Fox', nombreAplicativo: 'Anual' },
-  ];
 
 
+
+
+  periodicidadSeleccionada: number;
 
   constructor(private formBuilder: FormBuilder) {
+
+    this.hora = false;
+    this.intervalo = false;
+    this.semana = false;
+    this.meses = false;
+    this.dias = false;
 
     this.form = this.formBuilder.group({
       //mesesDelAnnio: this.formBuilder.array(this.mesesDelAnnio),
@@ -57,8 +70,26 @@ export class CalendarizacionComponent implements OnInit {
 
   ngOnInit(): void {
 
-
     this.calendarizacionForm = this.createCalendarizacionFormGroup();
+
+    this.periodicidad = [
+      {
+        id: 1,
+        periodo: "Diario"
+      },
+      {
+        id: 2,
+        periodo: "Semanal"
+      },
+      {
+        id: 3,
+        periodo: "Mensual"
+      },
+      {
+        id: 4,
+        periodo: "Intervalo Hora"
+      }
+    ];
 
     this.mesesDelAnnio = [
       {
@@ -111,111 +142,169 @@ export class CalendarizacionComponent implements OnInit {
       }
     ];
 
-    this.diasDelMes = [
+    this.diasDelaSemana = [
       {
-        dia: "1",
-        mes: 2
+        id: 1,
+        dia: "Lunes"
       },
       {
-        dia: "2",
-        mes: 2
+        id: 2,
+        dia: "Martes"
       },
       {
-        dia: "3",
-        mes: 2
+        id: 3,
+        dia: "Miercoles"
       },
       {
-        dia: "4",
-        mes: 2
+        id: 4,
+        dia: "Jueves"
       },
       {
-        dia: "5",
-        mes: 2,
+        id: 5,
+        dia: "Viernes"
       },
       {
-        dia: "6",
-        mes: 2,
+        id: 6,
+        dia: "Sabado"
       },
       {
-        dia: "7",
-        mes: 2
-      },
-      {
-        dia: "8",
-        mes: 2
-      },
-      {
-        dia: "9",
-        mes: 2
-      },
-      {
-        dia: "10",
-        mes: 2
-      },
-      {
-        dia: "11",
-        mes: 2
-      }, {
-        dia: "12",
-        mes: 2
-      },
-      {
-        dia: "13",
-        mes: 2
-      },
-      {
-        dia: "14",
-        mes: 2
-      },
-      {
-        dia: "15",
-        mes: 2
-      },
-      {
-        dia: "16",
-        mes: 2
-      },
-      {
-        dia: "17",
-        mes: 2
-      },
-      {
-        dia: "18",
-        mes: 2
-      },
-      {
-        dia: "19",
-        mes: 2
-      },
-      {
-        dia: "20",
-        mes: 2
-      },
-      {
-        dia: "21",
-        mes: 2
-      },
-      {
-        dia: "22",
-        mes: 2
-      },
-      {
-        dia: "23",
-        mes: 2
-      },
-      {
-        dia: "24",
-        mes: 2
-      },
-      {
-        dia: "25",
-        mes: 2
+        id: 7,
+        dia: "Domingo"
       }
     ];
 
-    
-  }
+    this.diasDelMes = [
+      {
+        dia: "1",
+        id: 1
+      },
+      {
+        dia: "2",
+        id: 2
+      },
+      {
+        dia: "3",
+        id: 3
+      },
+      {
+        dia: "4",
+        id: 4
+      },
+      {
+        dia: "5",
+        id: 5
+      },
+      {
+        dia: "6",
+        id: 6
+      },
+      {
+        dia: "7",
+        id: 7
+      },
+      {
+        dia: "8",
+        id: 8
+      },
+      {
+        dia: "9",
+        id: 9
+      },
+      {
+        dia: "10",
+        id: 10
+      },
+      {
+        dia: "11",
+        id: 11
+      }, {
+        dia: "12",
+        id: 12
+      },
+      {
+        dia: "13",
+        id: 13
+      },
+      {
+        dia: "14",
+        id: 14
+      },
+      {
+        dia: "15",
+        id: 15
+      },
+      {
+        dia: "16",
+        id: 16
+      },
+      {
+        dia: "17",
+        id: 17
+      },
+      {
+        dia: "18",
+        id: 18
+      },
+      {
+        dia: "19",
+        id: 19
+      },
+      {
+        dia: "20",
+        id: 20
+      },
+      {
+        dia: "21",
+        id: 21
+      },
+      {
+        dia: "22",
+        id: 22
+      },
+      {
+        dia: "23",
+        id: 23
+      },
+      {
+        dia: "24",
+        id: 24
+      },
+      {
+        dia: "25",
+        id: 25
+      },
+      {
+        dia: "26",
+        id: 26
+      },
+      {
+        dia: "27",
+        id: 27
+      },
+      {
+        dia: "28",
+        id: 28
+      },
+      {
+        dia: "29",
+        id: 29
+      },
+      {
+        dia: "30",
+        id: 30
+      },
+      {
+        dia: "31",
+        id: 31
+      },
+      {
+        dia: "Ultimo Dia",
+        id: 1
+      }
+    ];
 
+
+  }
 
 
   submitForm() {
@@ -226,6 +315,52 @@ export class CalendarizacionComponent implements OnInit {
     return new FormGroup({
 
     });
+  }
+
+  PeriodicidadChange() {
+    console.log("doSomething : ", this.periodicidadSeleccionada);
+
+    if (this.periodicidadSeleccionada === 1) {
+
+      this.hora = true;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    } else if (this.periodicidadSeleccionada === 2) {
+
+      this.hora = true;
+      this.intervalo = false;
+      this.semana = true;
+      this.meses = false;
+      this.dias = false;
+
+    } else if (this.periodicidadSeleccionada === 3) {
+
+      this.hora = true;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = true;
+      this.dias = true;
+
+    } else if (this.periodicidadSeleccionada === 4) {
+
+      this.hora = false;
+      this.intervalo = true;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    } else {
+
+      this.hora = false;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    }
   }
 
 }
