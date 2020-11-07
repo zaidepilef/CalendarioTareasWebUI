@@ -1,77 +1,78 @@
 <mat-card class="example-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <h2>Generar Calendario de Tareas</h2>
 
-    <h2>Periodicidad Mensual</h2>
+        <mat-card>
+            <mat-card-content>
 
-    <mat-card>
-        <mat-card-content>
+                <mat-form-field>
+                    <mat-label>Aplicativo</mat-label>
+                    <input matInput>
+                </mat-form-field>
 
-            <mat-form-field>
-                <mat-label>Aplicativo</mat-label>
-                <input matInput>
-            </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Periodicidad</mat-label>
+                    <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()">
+                        <mat-option>-Seleccione-</mat-option>
+                        <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
+                            {{periodo.periodo}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-            <mat-form-field>
-                <mat-label>Periodicidad</mat-label>
-                <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()">
-                    <mat-option>-Seleccione-</mat-option>
-                    <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
-                        {{periodo.periodo}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
+                <mat-form-field *ngIf="intervalo">
+                    <mat-label>Intervalo</mat-label>
+                    <input matInput type="number" required min="1" max="8">
+                </mat-form-field>
 
-            <mat-form-field *ngIf="intervalo">
-                <mat-label>Intervalo</mat-label>
-                <input matInput type="number"required min="1" max="8">
-            </mat-form-field>
+                <mat-form-field *ngIf="hora">
+                    <mat-label>Horario</mat-label>
+                    <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" required>
+                </mat-form-field>
 
-            <mat-form-field *ngIf="hora">
-                <mat-label>Horario</mat-label>
-                <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" required>
-            </mat-form-field>
+            </mat-card-content>
+        </mat-card>
 
-        </mat-card-content>
-    </mat-card>
+        <mat-card *ngIf="semana">
+            <mat-card-content>
+                <h4 class="mat-h4">Dias Semana</h4>
+                <mat-grid-list cols="4" rowHeight="50px">
+                    <mat-grid-tile *ngFor="let dias of diasDelaSemana">
+                        <mat-checkbox>
+                            {{dias.dia}}
+                        </mat-checkbox>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </mat-card-content>
+        </mat-card>
 
-    <mat-card *ngIf="semana">
-        <mat-card-content>
-            <h4 class="mat-h4">Dias Semana</h4>
-            <mat-grid-list cols="4" rowHeight="50px">
-                <mat-grid-tile *ngFor="let dias of diasDelaSemana">
-                    <mat-checkbox>
-                        {{dias.dia}}
-                    </mat-checkbox>
-                </mat-grid-tile>
-            </mat-grid-list>
-        </mat-card-content>
-    </mat-card>
+        <mat-card *ngIf="meses">
+            <mat-card-content>
+                <h4 class="mat-h4">Meses</h4>
+                <mat-grid-list cols="4" rowHeight="50px">
+                    <mat-grid-tile *ngFor="let mes of mesesDelAnnio">
+                        <mat-checkbox>
+                            {{mes.mes}}
+                        </mat-checkbox>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </mat-card-content>
+        </mat-card>
 
-    <mat-card *ngIf="meses">
-        <mat-card-content>
-            <h4 class="mat-h4">Meses</h4>
-            <mat-grid-list cols="4" rowHeight="50px">
-                <mat-grid-tile *ngFor="let mes of mesesDelAnnio">
-                    <mat-checkbox>
-                        {{mes.mes}}
-                    </mat-checkbox>
-                </mat-grid-tile>
-            </mat-grid-list>
-        </mat-card-content>
-    </mat-card>
+        <mat-card *ngIf="dias">
+            <mat-card-content>
+                <h4 class="mat-h4">Dias</h4>
+                <mat-grid-list cols="7" rowHeight="50px">
+                    <mat-grid-tile *ngFor="let dia of diasDelMes">
+                        <mat-checkbox>
+                            {{dia.dia}}
+                        </mat-checkbox>
+                    </mat-grid-tile>
+                </mat-grid-list>
+            </mat-card-content>
+        </mat-card>
 
-    <mat-card *ngIf="dias">
-        <mat-card-content>
-            <h4 class="mat-h4">Dias</h4>
-            <mat-grid-list cols="7" rowHeight="50px">
-                <mat-grid-tile *ngFor="let dia of diasDelMes">
-                    <mat-checkbox>
-                        {{dia.dia}}
-                    </mat-checkbox>
-                </mat-grid-tile>
-            </mat-grid-list>
-        </mat-card-content>
-    </mat-card>
+        <button mat-raised-button color="primary">Guardar</button>
 
-    <button mat-raised-button color="primary">Guardar</button>
-
+    </form>
 </mat-card>

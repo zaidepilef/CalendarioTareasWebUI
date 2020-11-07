@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 
-interface Aplicativo {
-  idAplicativo: string;
-  nombreAplicativo: string;
-}
+
 
 @Component({
   selector: 'app-calendarizacion',
@@ -21,56 +18,36 @@ export class CalendarizacionComponent implements OnInit {
   meses: boolean;
   dias: boolean;
 
-  // formulario 
-  calendarizacionForm: FormGroup;
-  form: FormGroup;
 
-
-  checked = false;
-  indeterminate = false;
-  labelPosition: 'before' | 'after' = 'after';
-  disabled = false;
-
-  interestFormGroup: FormGroup
-  interests: any;
-  selected: any;
   periodicidad: any[];
   mesesDelAnnio: any[];
   diasDelMes: any[];
   diasDelaSemana: any[];
 
-  aplicativos: Aplicativo[] = [
-    { idAplicativo: 'CUA', nombreAplicativo: 'Cuadratura' },
-    { idAplicativo: 'Cat', nombreAplicativo: 'Meow!' },
-    { idAplicativo: 'Cow', nombreAplicativo: 'Moo!' },
-    { idAplicativo: 'Fox', nombreAplicativo: 'Wa-pa-pa-pa-pa-pa-pow!' },
-  ];
-
-
-
-
-
+  form: FormGroup;
+  nombreAplicativo: string;
   periodicidadSeleccionada: number;
+  numeroIntervalo: number;
+  horario: string;
 
-  constructor(private formBuilder: FormBuilder) {
 
+  constructor(private fb: FormBuilder) {
+
+    this.form = this.fb.group({
+      //skills: this.buildSkills()
+      mesesDelAnnio: this.fb.array(this.mesesDelAnnio.map(x => !1)),
+      diasDelMes: this.fb.array(this.diasDelMes.map(x => !1)),
+      diasDelaSemana: this.fb.array(this.diasDelaSemana.map(x => !1))
+    });
     this.hora = false;
     this.intervalo = false;
     this.semana = false;
     this.meses = false;
     this.dias = false;
-
-    this.form = this.formBuilder.group({
-      //mesesDelAnnio: this.formBuilder.array(this.mesesDelAnnio),
-      //diasDelMes: this.formBuilder.array(this.diasDelMes)
-    });
-
-
   }
 
-  ngOnInit(): void {
 
-    this.calendarizacionForm = this.createCalendarizacionFormGroup();
+  ngOnInit(): void {
 
     this.periodicidad = [
       {
@@ -303,22 +280,25 @@ export class CalendarizacionComponent implements OnInit {
       }
     ];
 
-
   }
 
 
   submitForm() {
-    console.log(this.form.value)
-  }
-
-  createCalendarizacionFormGroup() {
-    return new FormGroup({
-
+    const valueToStore = Object.assign({}, this.form.value, {
+      mesesDelAnnio: this.convertToValue('mesesDelAnnio'),
+      diasDelMes: this.convertToValue('diasDelMes'),
+      diasDelaSemana: this.convertToValue('diasDelaSemana')
     });
+    console.log(valueToStore);
   }
+
+
+  convertToValue(key: string) {
+    return this.form.value[key].map((x, i) => x && this[key][i]).filter(x => !!x);
+  }
+
 
   PeriodicidadChange() {
-    console.log("doSomething : ", this.periodicidadSeleccionada);
 
     if (this.periodicidadSeleccionada === 1) {
 
@@ -362,5 +342,6 @@ export class CalendarizacionComponent implements OnInit {
 
     }
   }
+
 
 }

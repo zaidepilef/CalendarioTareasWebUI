@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import {HttpClientModule} from '@angular/common/http';
 
 import { HomeComponent } from './pages/home/home.component';
 import { CalendarizacionComponent } from './components/calendarizacion/calendarizacion.component';
@@ -14,8 +14,8 @@ import { MaterialModule } from './material.module';
 import { FooterComponent } from './shared/footer/footer.component';
 import { HeaderComponent } from './shared/header/header.component';
 import { LayoutComponent } from './shared/layout/layout.component';
-import { MantenedorTareasComponent } from './components/mantenedor-tareas/mantenedor-tareas.component';
-
+import { TareaprogramadaComponent } from './components/tareaprogramada/tareaprogramada.component';
+import { MatTableExporterModule } from 'mat-table-exporter';
 
 @NgModule({
   declarations: [
@@ -25,8 +25,8 @@ import { MantenedorTareasComponent } from './components/mantenedor-tareas/manten
     NotFoundComponent,
     FooterComponent,
     HeaderComponent,
-    LayoutComponent,
-    MantenedorTareasComponent
+    LayoutComponent, 
+    TareaprogramadaComponent
   ],
   imports: [
     BrowserModule,
@@ -34,7 +34,9 @@ import { MantenedorTareasComponent } from './components/mantenedor-tareas/manten
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
-    MaterialModule
+    MaterialModule,
+    HttpClientModule,
+	  MatTableExporterModule
   ],
   providers: [],
   bootstrap: [AppComponent]
