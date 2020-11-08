@@ -7,23 +7,20 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 
 const routes: Routes = [
-  {
-    path: '',
-    pathMatch: 'full',
-    component: HomeComponent
-  },
+
+  { path: '', redirectTo: '/tareas', pathMatch: 'full' },
   {
     path: 'calendarizacion',
     pathMatch: 'full',
     component: CalendarizacionComponent
   },
-  
+
   {
-  path: 'tareas',
-  pathMatch: 'full',
-  component: TareaprogramadaComponent
+    path: 'tareas',
+    pathMatch: 'full',
+    component: TareaprogramadaComponent
   },
-  
+
   {
     path: '404',
     component: NotFoundComponent

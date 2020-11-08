@@ -1,5 +1,5 @@
 <mat-card class="example-card">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form">
         <h2>Generar Calendario de Tareas</h2>
 
         <mat-card>
@@ -7,12 +7,13 @@
 
                 <mat-form-field>
                     <mat-label>Aplicativo</mat-label>
-                    <input matInput>
+                    <input [(ngModel)]="nombreAplicativo" matInput [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
 
                 <mat-form-field>
                     <mat-label>Periodicidad</mat-label>
-                    <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()">
+                    <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()"
+                        [ngModelOptions]="{standalone: true}">
                         <mat-option>-Seleccione-</mat-option>
                         <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
                             {{periodo.periodo}}
@@ -22,12 +23,14 @@
 
                 <mat-form-field *ngIf="intervalo">
                     <mat-label>Intervalo</mat-label>
-                    <input matInput type="number" required min="1" max="8">
+                    <input matInput type="number" required min="1" max="8" [(ngModel)]="numeroIntervalo"
+                        [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
 
                 <mat-form-field *ngIf="hora">
                     <mat-label>Horario</mat-label>
-                    <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" required>
+                    <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" [(ngModel)]="horario"
+                        [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
 
             </mat-card-content>
@@ -38,7 +41,8 @@
                 <h4 class="mat-h4">Dias Semana</h4>
                 <mat-grid-list cols="4" rowHeight="50px">
                     <mat-grid-tile *ngFor="let dias of diasDelaSemana">
-                        <mat-checkbox>
+                        <mat-checkbox [(ngModel)]="dias.checked" (change)="semanachangeList()"
+                            [ngModelOptions]="{standalone: true}">
                             {{dias.dia}}
                         </mat-checkbox>
                     </mat-grid-tile>
@@ -51,7 +55,8 @@
                 <h4 class="mat-h4">Meses</h4>
                 <mat-grid-list cols="4" rowHeight="50px">
                     <mat-grid-tile *ngFor="let mes of mesesDelAnnio">
-                        <mat-checkbox>
+                        <mat-checkbox [(ngModel)]="mes.checked" (change)="meseschangeList()"
+                            [ngModelOptions]="{standalone: true}">
                             {{mes.mes}}
                         </mat-checkbox>
                     </mat-grid-tile>
@@ -64,7 +69,8 @@
                 <h4 class="mat-h4">Dias</h4>
                 <mat-grid-list cols="7" rowHeight="50px">
                     <mat-grid-tile *ngFor="let dia of diasDelMes">
-                        <mat-checkbox>
+                        <mat-checkbox [(ngModel)]="dia.checked" (change)="diaschangeList()"
+                            [ngModelOptions]="{standalone: true}">
                             {{dia.dia}}
                         </mat-checkbox>
                     </mat-grid-tile>
