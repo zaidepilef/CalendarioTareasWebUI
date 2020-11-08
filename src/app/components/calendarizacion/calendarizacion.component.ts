@@ -12,7 +12,6 @@ import { CalendarioService } from 'src/app/services/calendario.service';
 export class CalendarizacionComponent implements OnInit {
 
   //cajas formulario
-
   hora: boolean;
   intervalo: boolean;
   semana: boolean;
@@ -21,15 +20,21 @@ export class CalendarizacionComponent implements OnInit {
 
 
   periodicidad: any[];
-  mesesDelAnnio: any[];
-  diasDelMes: any[];
   diasDelaSemana: any[];
+  diasDelaSemanaSeleccionado: Array<string> = [];
+  mesesDelAnnio: any[];
+  mesesDelAnnioSeleccionado: Array<string> = [];
+  diasDelMes: any[];
+  diasDelMesSeleccionado: Array<string> = [];
 
   form: FormGroup;
   nombreAplicativo: string;
   periodicidadSeleccionada: number;
   numeroIntervalo: number;
   horario: string;
+
+  //objeto al API
+  dataEnvia: any = {}
 
 
   constructor(private fb: FormBuilder, private service: CalendarioService) {
@@ -74,37 +79,37 @@ export class CalendarizacionComponent implements OnInit {
       {
         id: 1,
         dia: "Lunes",
-        checked: true
+        checked: false
       },
       {
         id: 2,
         dia: "Martes",
-        checked: true
+        checked: false
       },
       {
         id: 3,
         dia: "Miercoles",
-        checked: true
+        checked: false
       },
       {
         id: 4,
         dia: "Jueves",
-        checked: true
+        checked: false
       },
       {
         id: 5,
         dia: "Viernes",
-        checked: true
+        checked: false
       },
       {
         id: 6,
         dia: "Sabado",
-        checked: true
+        checked: false
       },
       {
         id: 7,
         dia: "Domingo",
-        checked: true
+        checked: false
       }
     ];
 
@@ -333,90 +338,50 @@ export class CalendarizacionComponent implements OnInit {
       }
     ];
 
-    let resp = this.service.listartareasprogramadas();
-
-
+    /*
     this.service.listartareasprogramadas().subscribe(
       res => {
-        console.info('tareas : ',res)
+        console.info('tareas : ', res)
       }
       , err => console.error(err)
     );
+    */
 
   }
 
 
   semanachangeList() {
-    let checked_count = 0;
-    //Get total checked items
-    console.log('list_change :', this.diasDelaSemana);
+    this.diasDelaSemanaSeleccionado = [];
+
     for (let value of Object.values(this.diasDelaSemana)) {
       if (value.checked) {
-        checked_count++;
+        this.diasDelaSemanaSeleccionado.push(value.id.toString());
       }
-    }
-
-    if (checked_count > 0 && checked_count < this.diasDelaSemana.length) {
-      // If some checkboxes are checked but not all; then set Indeterminate state of the master to true.
-      //this.master_indeterminate = true;
-    } else if (checked_count == this.diasDelaSemana.length) {
-      //If checked count is equal to total items; then check the master checkbox and also set Indeterminate state to false.
-      //this.master_indeterminate = false;
-      //this.master_checked = true;
-    } else {
-      //If none of the checkboxes in the list is checked then uncheck master also set Indeterminate to false.
-      //this.master_indeterminate = false;
-      //this.master_checked = false;
     }
   }
 
 
   meseschangeList() {
-    let checked_count = 0;
-    //Get total checked items
-    console.log('list_change :', this.mesesDelAnnio)
-    for (let value of Object.values(this.mesesDelAnnio)) {
-      if (value.checked)
-        checked_count++;
-    }
+    this.mesesDelAnnioSeleccionado = [];
 
-    if (checked_count > 0 && checked_count < this.mesesDelAnnio.length) {
-      // If some checkboxes are checked but not all; then set Indeterminate state of the master to true.
-      //this.master_indeterminate = true;
-    } else if (checked_count == this.mesesDelAnnio.length) {
-      //If checked count is equal to total items; then check the master checkbox and also set Indeterminate state to false.
-      //this.master_indeterminate = false;
-      //this.master_checked = true;
-    } else {
-      //If none of the checkboxes in the list is checked then uncheck master also set Indeterminate to false.
-      //this.master_indeterminate = false;
-      //this.master_checked = false;
+    for (let value of Object.values(this.mesesDelAnnio)) {
+      if (value.checked) {
+        this.mesesDelAnnioSeleccionado.push(value.id.toString());
+      }
     }
   }
 
 
   diaschangeList() {
-    let checked_count = 0;
-    //Get total checked items
-    console.log('diaschangeList :', this.diasDelMes)
-    for (let value of Object.values(this.diasDelMes)) {
-      if (value.checked)
-        checked_count++;
-    }
+    this.mesesDelAnnioSeleccionado = [];
 
-    if (checked_count > 0 && checked_count < this.diasDelMes.length) {
-      // If some checkboxes are checked but not all; then set Indeterminate state of the master to true.
-      //this.master_indeterminate = true;
-    } else if (checked_count == this.diasDelMes.length) {
-      //If checked count is equal to total items; then check the master checkbox and also set Indeterminate state to false.
-      //this.master_indeterminate = false;
-      //this.master_checked = true;
-    } else {
-      //If none of the checkboxes in the list is checked then uncheck master also set Indeterminate to false.
-      //this.master_indeterminate = false;
-      //this.master_checked = false;
+    for (let value of Object.values(this.diasDelMes)) {
+      if (value.checked) {
+        this.diasDelMesSeleccionado.push(value.id.toString());
+      }
     }
   }
+
 
   submitForm() {
     const valueToStore = Object.assign({}, this.form.value, {
@@ -476,6 +441,115 @@ export class CalendarizacionComponent implements OnInit {
       this.dias = false;
 
     }
+  }
+
+
+  Guardar() {
+
+    console.log('this.diasDelaSemanaSeleccionado : ', this.diasDelaSemanaSeleccionado);
+    console.log('this.mesesDelAnnioSeleccionado : ', this.mesesDelAnnioSeleccionado);
+    console.log('this.diasDelMesSeleccionado : ', this.diasDelMesSeleccionado);
+
+    if (this.periodicidadSeleccionada === 1) {
+      this.EnviarDiario()
+    } else if (this.periodicidadSeleccionada === 2) {
+      this.EnviarSemanal()
+    } else if (this.periodicidadSeleccionada === 3) {
+      this.EnviarMensual()
+    } else if (this.periodicidadSeleccionada === 4) {
+      this.EnviarIntervalo()
+    } else {
+
+    }
+
+  }
+
+
+  EnviarDiario() {
+    this.dataEnvia = {
+      nombreAplicativo: this.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semana: this.diasDelaSemanaSeleccionado,
+      meses: [],
+      dias: [],
+      hora: this.horario,
+      intervalo: 0,
+    }
+    console.log('this.dataEnvia : ', this.dataEnvia);
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+      }
+      , err => console.error(err)
+    );
+  }
+
+
+  EnviarSemanal() {
+    this.dataEnvia = {
+      nombreAplicativo: this.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semana: this.diasDelaSemanaSeleccionado,
+      meses: [],
+      dias: [],
+      hora: this.horario,
+      intervalo: 0,
+    }
+    console.log('this.dataEnvia : ', this.dataEnvia);
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+      }
+      , err => console.error(err)
+    );
+
+  }
+
+
+  EnviarMensual() {
+    this.dataEnvia = {
+      nombreAplicativo: this.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semana: [],
+      meses: this.mesesDelAnnioSeleccionado,
+      dias: this.diasDelMesSeleccionado,
+      hora: this.horario,
+      intervalo: 0,
+    }
+
+    console.log('this.dataEnvia : ', this.dataEnvia);
+
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+      }
+      , err => console.error(err)
+    );
+
+  }
+
+
+  EnviarIntervalo() {
+    this.dataEnvia = {
+      nombreAplicativo: this.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semana: [],
+      meses: [],
+      dias: [],
+      hora: "",
+      intervalo: this.intervalo,
+    }
+
+    console.log('this.dataEnvia : ', this.dataEnvia);
+
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+      }
+      , err => console.error(err)
+    );
+
+
   }
 
 

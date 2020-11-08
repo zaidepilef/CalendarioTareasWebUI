@@ -18,6 +18,7 @@ export class CalendarioService {
 
 	// para ingresar una tarea
 	public insertartareasprogramadas(data: any) {
+		console.log("data recibida : ",data)
 		return this.httpClient.post(`${environment.API_URL}/calendariotareasprogramadas/`, data);
 	}
 
