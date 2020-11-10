@@ -18,10 +18,16 @@ export class CalendarioService {
 
 	// para ingresar una tarea
 	public insertartareasprogramadas(data: any) {
-		console.log("data recibida : ",data)
+		console.log("data recibida : ", data)
 		return this.httpClient.post(`${environment.API_URL}/calendariotareasprogramadas/`, data);
 	}
 
-	
+	// editar por get
+	public BuscarCalendarioTareaProgramdaByIdTarea(id: any) {
+		console.log('BuscarCalendarioTareaProgramdaByIdTarea : ', id)
+		return this.httpClient.get(`${environment.API_URL}/calendariotareasprogramadas/BuscarCalendarioTareaProgramdaByIdTarea/` + id);
+	}
+
+
 
 }

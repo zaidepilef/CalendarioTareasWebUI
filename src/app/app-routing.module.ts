@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { CalendarizacionComponent } from './components/calendarizacion/calendarizacion.component';
+import { EditarTareaComponent } from './components/editar-tarea/editar-tarea.component';
 import { TareaprogramadaComponent } from './components/tareaprogramada/tareaprogramada.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
@@ -14,7 +15,10 @@ const routes: Routes = [
     pathMatch: 'full',
     component: CalendarizacionComponent
   },
-
+  {
+    path: 'editarTarea/:id',
+    component: EditarTareaComponent
+  },
   {
     path: 'tareas',
     pathMatch: 'full',

@@ -18,13 +18,13 @@ export class CalendarizacionComponent implements OnInit {
   meses: boolean;
   dias: boolean;
 
-
   periodicidad: any[];
   diasDelaSemana: any[];
-  diasDelaSemanaSeleccionado: Array<string> = [];
   mesesDelAnnio: any[];
-  mesesDelAnnioSeleccionado: Array<string> = [];
   diasDelMes: any[];
+
+  diasDelaSemanaSeleccionado: Array<string> = [];
+  mesesDelAnnioSeleccionado: Array<string> = [];
   diasDelMesSeleccionado: Array<string> = [];
 
   form: FormGroup;

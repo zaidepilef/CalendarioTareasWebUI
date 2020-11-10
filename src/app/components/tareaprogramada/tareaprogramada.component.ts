@@ -5,6 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { ViewChild } from '@angular/core';
+import { Route } from '@angular/compiler/src/core';
+import { Router } from '@angular/router';
 
 
 
@@ -21,7 +23,7 @@ export class TareaprogramadaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private service: TareaProgramadaServiceService) { }
+  constructor(private service: TareaProgramadaServiceService, private router: Router) { }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
@@ -38,6 +40,11 @@ export class TareaprogramadaComponent implements OnInit {
 
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+
+  btnClickNuevo() {
+    this.router.navigateByUrl('/calendarizacion');
   }
 
 }
