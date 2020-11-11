@@ -351,6 +351,7 @@ export class EditarTareaComponent implements OnInit {
         console.log('response : ', this.response);
 
 
+
         //console.log('nombreAplicativo : ', res.nombreAplicativo);
         //console.log('hora : ', res.hora);
         //console.log('intervalo : ', res.intervalo);
@@ -385,6 +386,18 @@ export class EditarTareaComponent implements OnInit {
           this.meses = true;
           this.dias = true;
 
+          const mesesEntantes = this.response.meses;
+          mesesEntantes.forEach(element => {
+            const objIndex = this.mesesDelAnnio.findIndex((obj => obj.id == element));
+            this.mesesDelAnnio[objIndex].checked = true;
+          });
+
+          const diasEntrantes = this.response.dias;
+          diasEntrantes.forEach(element => {
+            const objIndex = this.diasDelMes.findIndex((obj => obj.id == element));
+            this.diasDelMes[objIndex].checked = true;
+          });
+
         } else if (this.periodicidadSeleccionada === 4) {
 
           this.hora = false;
@@ -402,15 +415,11 @@ export class EditarTareaComponent implements OnInit {
           this.dias = false;
 
         }
-
       }
       , err => console.error(err)
     );
 
-
   }
-
-
 
   PeriodicidadChange() {
     console.log('this.periodicidadSeleccionada : ', this.periodicidadSeleccionada);
