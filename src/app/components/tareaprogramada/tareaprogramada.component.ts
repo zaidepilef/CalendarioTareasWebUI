@@ -47,4 +47,18 @@ export class TareaprogramadaComponent implements OnInit {
     this.router.navigateByUrl('/calendarizacion');
   }
 
+  editTareaItem(action, obj) {
+
+    console.log('action : ', action);
+    console.log('obj : ', obj);
+    this.router.navigate(['/editarTarea', Number(obj.codPeriodicidadProceso)])
+  }
+
+  openDialog(action, obj) {
+
+    console.log('action : ', action);
+    console.log('obj : ', obj);
+    this.router.navigate(['/editarTarea', Number(obj.codPeriodicidadProceso)])
+  }
+
 }

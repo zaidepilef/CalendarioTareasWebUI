@@ -27,8 +27,17 @@ export class EditarTareaComponent implements OnInit {
   horario: string;
 
   form: FormGroup;
+  response: any = {
+    codPeriodicidadProceso: 0,
+    dias: [],
+    hora: "",
+    intervalo: 0,
+    meses: [],
+    message: "",
+    nombreAplicativo: ""
+  };
 
-  constructor(private fb: FormBuilder, private activatedRoute: ActivatedRoute, private service: CalendarioService) {
+  constructor(private fb: FormBuilder, private activatedRoute: ActivatedRoute, private service: CalendarioService, private router: Router) {
 
     this.form = this.fb.group({
       nombreAplicativo: new FormControl('')
@@ -327,6 +336,8 @@ export class EditarTareaComponent implements OnInit {
     ];
   }
 
+
+
   ngOnInit(): void {
 
     let params: any = this.activatedRoute.snapshot.params;
@@ -335,17 +346,20 @@ export class EditarTareaComponent implements OnInit {
 
     this.service.BuscarCalendarioTareaProgramdaByIdTarea(params.id).subscribe(
       res => {
+        this.response = res
         console.log('BuscarCalendarioTareaProgramdaByIdTarea : ', res);
+        console.log('response : ', this.response);
+
 
         //console.log('nombreAplicativo : ', res.nombreAplicativo);
         //console.log('hora : ', res.hora);
         //console.log('intervalo : ', res.intervalo);
 
-        //this.horario = res.hora;
+        this.horario = this.response.hora;
+        this.numeroIntervalo = this.response.intervalo;
+        this.periodicidadSeleccionada = this.response.codPeriodicidadProceso;
+        this.nombreAplicativo = this.response.nombreAplicativo;
         // numeroIntervalo: number;
-        //this.numeroIntervalo = res.intervalo;
-        //this.periodicidadSeleccionada = Number(res.codPeriodicidadProceso);
-        //this.nombreAplicativo = res.nombreAplicativo.ToString();
 
         if (this.periodicidadSeleccionada === 1) {
 
@@ -446,6 +460,11 @@ export class EditarTareaComponent implements OnInit {
 
   Guardar() {
 
+  }
+
+
+  Volver() {
+    this.router.navigateByUrl('/tareas');
   }
 
 }

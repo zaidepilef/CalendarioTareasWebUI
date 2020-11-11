@@ -11,14 +11,22 @@
                 </mat-form-field>
 
                 <mat-form-field>
+
                     <mat-label>Periodicidad</mat-label>
-                    <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()"
+
+                    <mat-select 
+                        [(ngModel)]="periodicidadSeleccionada" 
+                        (selectionChange)="PeriodicidadChange()"
                         [ngModelOptions]="{standalone: true}">
+
                         <mat-option>-Seleccione-</mat-option>
+
                         <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
                             {{periodo.periodo}}
                         </mat-option>
+
                     </mat-select>
+
                 </mat-form-field>
 
                 <mat-form-field *ngIf="intervalo">
@@ -78,6 +86,7 @@
             </mat-card-content>
         </mat-card>
 
+        <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
         <button mat-raised-button color="primary" (click)="Guardar()">Guardar</button>
 
     </form>
