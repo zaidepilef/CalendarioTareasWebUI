@@ -337,16 +337,6 @@ export class CalendarizacionComponent implements OnInit {
         checked: false
       }
     ];
-
-    /*
-    this.service.listartareasprogramadas().subscribe(
-      res => {
-        console.info('tareas : ', res)
-      }
-      , err => console.error(err)
-    );
-    */
-
   }
 
 

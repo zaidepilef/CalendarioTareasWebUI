@@ -336,16 +336,16 @@ export class EditarTareaComponent implements OnInit {
     this.service.BuscarCalendarioTareaProgramdaByIdTarea(params.id).subscribe(
       res => {
         console.log('BuscarCalendarioTareaProgramdaByIdTarea : ', res);
-        console.log('codPeriodicidadProceso : ', res.codPeriodicidadProceso);
-        console.log('nombreAplicativo : ', res.nombreAplicativo);
-        console.log('hora : ', res.hora);
-        console.log('intervalo : ', res.intervalo);
 
-        this.horario = res.hora;
+        //console.log('nombreAplicativo : ', res.nombreAplicativo);
+        //console.log('hora : ', res.hora);
+        //console.log('intervalo : ', res.intervalo);
+
+        //this.horario = res.hora;
         // numeroIntervalo: number;
-        this.numeroIntervalo = res.intervalo;
-        this.periodicidadSeleccionada = res.codPeriodicidadProceso;
-        this.nombreAplicativo = res.nombreAplicativo;
+        //this.numeroIntervalo = res.intervalo;
+        //this.periodicidadSeleccionada = Number(res.codPeriodicidadProceso);
+        //this.nombreAplicativo = res.nombreAplicativo.ToString();
 
         if (this.periodicidadSeleccionada === 1) {
 
@@ -393,13 +393,58 @@ export class EditarTareaComponent implements OnInit {
       , err => console.error(err)
     );
 
-    /*
-   this.activatedRoute.queryParams.subscribe(params => {
-     console.log('params : ', params);
-     const tareaId = params['id'];
-     console.log(tareaId);
-   });
-   */
+
+  }
+
+
+
+  PeriodicidadChange() {
+    console.log('this.periodicidadSeleccionada : ', this.periodicidadSeleccionada);
+    if (this.periodicidadSeleccionada === 1) {
+
+      this.hora = true;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    } else if (this.periodicidadSeleccionada === 2) {
+
+      this.hora = true;
+      this.intervalo = false;
+      this.semana = true;
+      this.meses = false;
+      this.dias = false;
+
+    } else if (this.periodicidadSeleccionada === 3) {
+
+      this.hora = true;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = true;
+      this.dias = true;
+
+    } else if (this.periodicidadSeleccionada === 4) {
+
+      this.hora = false;
+      this.intervalo = true;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    } else {
+
+      this.hora = false;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    }
+  }
+
+
+  Guardar() {
 
   }
 
