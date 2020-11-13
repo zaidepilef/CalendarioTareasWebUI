@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CalendarioService } from 'src/app/services/calendario.service';
 
 
@@ -13,6 +14,8 @@ export class CalendarizacionComponent implements OnInit {
 
   //cajas formulario
   hora: boolean;
+  fecha: boolean;
+  grilla: boolean;
   intervalo: boolean;
   semana: boolean;
   meses: boolean;
@@ -32,12 +35,14 @@ export class CalendarizacionComponent implements OnInit {
   periodicidadSeleccionada: number;
   numeroIntervalo: number;
   horario: string;
+  fechaAplicacion: Date;
 
   //objeto al API
   dataEnvia: any = {}
 
+  response: any = [{}]
 
-  constructor(private fb: FormBuilder, private service: CalendarioService) {
+  constructor(private fb: FormBuilder, private service: CalendarioService, private router: Router) {
 
     this.form = this.fb.group({
       nombreAplicativo: new FormControl('')
@@ -46,34 +51,30 @@ export class CalendarizacionComponent implements OnInit {
       //diasDelMes: this.fb.array(this.diasDelMes.map(x => !1)),
       //diasDelaSemana: this.fb.array(this.diasDelaSemana.map(x => !1))
     });
-    this.hora = false;
-    this.intervalo = false;
-    this.semana = false;
-    this.meses = false;
-    this.dias = false;
+    this.periodicidad = [];
+    this.fechaAplicacion = new Date();
+
+    this.CargaDataCombo();
+
   }
 
 
   ngOnInit(): void {
 
-    this.periodicidad = [
-      {
-        id: 1,
-        periodo: "Diario"
-      },
-      {
-        id: 2,
-        periodo: "Semanal"
-      },
-      {
-        id: 3,
-        periodo: "Mensual"
-      },
-      {
-        id: 4,
-        periodo: "Intervalo Hora"
+    this.service.listartipoperiodicidad().subscribe(
+      res => {
+        this.response = res;
+        //console.log('this.response : ', this.response);
+        this.response.forEach(obj => {
+          //console.log('obj : ', obj);
+          this.periodicidad.push({
+            id: obj.idTipoPeriodicidad,
+            periodo: obj.descTipoPeriodicidad
+          });
+        });
       }
-    ];
+      , err => console.error(err)
+    );
 
     this.diasDelaSemana = [
       {
@@ -393,6 +394,7 @@ export class CalendarizacionComponent implements OnInit {
     if (this.periodicidadSeleccionada === 1) {
 
       this.hora = true;
+      this.fecha = false;
       this.intervalo = false;
       this.semana = false;
       this.meses = false;
@@ -401,6 +403,7 @@ export class CalendarizacionComponent implements OnInit {
     } else if (this.periodicidadSeleccionada === 2) {
 
       this.hora = true;
+      this.fecha = false;
       this.intervalo = false;
       this.semana = true;
       this.meses = false;
@@ -409,6 +412,7 @@ export class CalendarizacionComponent implements OnInit {
     } else if (this.periodicidadSeleccionada === 3) {
 
       this.hora = true;
+      this.fecha = false;
       this.intervalo = false;
       this.semana = false;
       this.meses = true;
@@ -417,14 +421,24 @@ export class CalendarizacionComponent implements OnInit {
     } else if (this.periodicidadSeleccionada === 4) {
 
       this.hora = false;
+      this.fecha = false;
       this.intervalo = true;
       this.semana = false;
       this.meses = false;
       this.dias = false;
 
+    } else if (this.periodicidadSeleccionada === 1002) {
+
+      this.hora = true;
+      this.fecha = true;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
     } else {
 
       this.hora = false;
+      this.fecha = false;
       this.intervalo = false;
       this.semana = false;
       this.meses = false;
@@ -454,6 +468,9 @@ export class CalendarizacionComponent implements OnInit {
 
   }
 
+  Volver() {
+    this.router.navigateByUrl('/tareas');
+  }
 
   EnviarDiario() {
     this.dataEnvia = {
@@ -539,6 +556,25 @@ export class CalendarizacionComponent implements OnInit {
       , err => console.error(err)
     );
 
+
+  }
+
+  CargaDataCombo() {
+
+    this.service.listartipoperiodicidad().subscribe(
+      res => {
+        this.response = res;
+        //console.log('this.response : ', this.response);
+        this.response.forEach(obj => {
+          console.log('obj : ', obj);
+          this.periodicidad.push({
+            id: obj.idTipoPeriodicidad,
+            periodo: obj.descTipoPeriodicidad
+          });
+        });
+      }
+      , err => console.error(err)
+    );
 
   }
 

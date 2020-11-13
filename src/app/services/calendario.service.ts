@@ -24,8 +24,11 @@ export class CalendarioService {
 
 	// editar por get
 	public BuscarCalendarioTareaProgramdaByIdTarea(id: any) {
-		console.log('BuscarCalendarioTareaProgramdaByIdTarea : ', id)
 		return this.httpClient.get(`${environment.API_URL}/calendariotareasprogramadas/BuscarCalendarioTareaProgramdaByIdTarea/` + id);
+	}
+
+	public listartipoperiodicidad() {
+		return this.httpClient.get(`${environment.API_URL}/calendariotareasprogramadas/listartipoperiodicidad/`);
 	}
 
 

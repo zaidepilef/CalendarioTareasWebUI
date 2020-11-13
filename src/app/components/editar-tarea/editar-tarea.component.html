@@ -11,28 +11,28 @@
                 </mat-form-field>
 
                 <mat-form-field>
-
                     <mat-label>Periodicidad</mat-label>
-
-                    <mat-select 
-                        [(ngModel)]="periodicidadSeleccionada" 
-                        (selectionChange)="PeriodicidadChange()"
+                    <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()"
                         [ngModelOptions]="{standalone: true}">
-
                         <mat-option>-Seleccione-</mat-option>
-
                         <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
                             {{periodo.periodo}}
                         </mat-option>
-
                     </mat-select>
-
                 </mat-form-field>
 
                 <mat-form-field *ngIf="intervalo">
                     <mat-label>Intervalo</mat-label>
                     <input matInput type="number" required min="1" max="8" [(ngModel)]="numeroIntervalo"
                         [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" *ngIf="fecha">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="fechaAplicacion"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker [calendarHeaderComponent]="exampleHeader"></mat-datepicker>
                 </mat-form-field>
 
                 <mat-form-field *ngIf="hora">

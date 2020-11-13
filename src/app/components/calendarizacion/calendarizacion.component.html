@@ -27,12 +27,35 @@
                         [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
 
+                <mat-form-field appearance="fill" *ngIf="fecha">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="fechaAplicacion"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker [calendarHeaderComponent]="exampleHeader"></mat-datepicker>
+                </mat-form-field>
+
                 <mat-form-field *ngIf="hora">
                     <mat-label>Horario</mat-label>
                     <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" [(ngModel)]="horario"
                         [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
 
+            </mat-card-content>
+        </mat-card>
+
+
+        <mat-card *ngIf="grilla">
+            <mat-card-content>
+                <h4 class="mat-h4">Dias Semana</h4>
+                <mat-grid-list cols="4" rowHeight="50px">
+                    <mat-grid-tile *ngFor="let dias of diasDelaSemana">
+                        <mat-checkbox [(ngModel)]="dias.checked" (change)="semanachangeList()"
+                            [ngModelOptions]="{standalone: true}">
+                            {{dias.dia}}
+                        </mat-checkbox>
+                    </mat-grid-tile>
+                </mat-grid-list>
             </mat-card-content>
         </mat-card>
 
@@ -78,6 +101,7 @@
             </mat-card-content>
         </mat-card>
 
+        <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
         <button mat-raised-button color="primary" (click)="Guardar()">Guardar</button>
 
     </form>

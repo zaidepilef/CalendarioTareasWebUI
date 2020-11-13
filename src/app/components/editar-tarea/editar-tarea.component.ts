@@ -11,6 +11,7 @@ import { CalendarioService } from 'src/app/services/calendario.service';
 export class EditarTareaComponent implements OnInit {
 
   hora: boolean;
+  fecha: boolean;
   intervalo: boolean;
   semana: boolean;
   meses: boolean;
@@ -48,29 +49,14 @@ export class EditarTareaComponent implements OnInit {
     });
 
     this.hora = false;
+    this.fecha = false;
     this.intervalo = false;
     this.semana = false;
     this.meses = false;
     this.dias = false;
 
-    this.periodicidad = [
-      {
-        id: 1,
-        periodo: "Diario"
-      },
-      {
-        id: 2,
-        periodo: "Semanal"
-      },
-      {
-        id: 3,
-        periodo: "Mensual"
-      },
-      {
-        id: 4,
-        periodo: "Intervalo Hora"
-      }
-    ];
+    this.periodicidad = [];
+    this.CargaDataCombo();
 
     this.diasDelaSemana = [
       {
@@ -334,28 +320,19 @@ export class EditarTareaComponent implements OnInit {
         checked: false
       }
     ];
-  }
 
+  }
 
 
   ngOnInit(): void {
 
     let params: any = this.activatedRoute.snapshot.params;
-    console.log(params.id);
-    var tareaID = params.id;
 
     this.service.BuscarCalendarioTareaProgramdaByIdTarea(params.id).subscribe(
       res => {
+
+        console.log("response : ", res);
         this.response = res
-        console.log('BuscarCalendarioTareaProgramdaByIdTarea : ', res);
-        console.log('response : ', this.response);
-
-
-
-        //console.log('nombreAplicativo : ', res.nombreAplicativo);
-        //console.log('hora : ', res.hora);
-        //console.log('intervalo : ', res.intervalo);
-
         this.horario = this.response.hora;
         this.numeroIntervalo = this.response.intervalo;
         this.periodicidadSeleccionada = this.response.codPeriodicidadProceso;
@@ -365,6 +342,7 @@ export class EditarTareaComponent implements OnInit {
         if (this.periodicidadSeleccionada === 1) {
 
           this.hora = true;
+          this.fecha = false;
           this.intervalo = false;
           this.semana = false;
           this.meses = false;
@@ -373,6 +351,7 @@ export class EditarTareaComponent implements OnInit {
         } else if (this.periodicidadSeleccionada === 2) {
 
           this.hora = true;
+          this.fecha = false;
           this.intervalo = false;
           this.semana = true;
           this.meses = false;
@@ -381,6 +360,7 @@ export class EditarTareaComponent implements OnInit {
         } else if (this.periodicidadSeleccionada === 3) {
 
           this.hora = true;
+          this.fecha = false;
           this.intervalo = false;
           this.semana = false;
           this.meses = true;
@@ -401,7 +381,17 @@ export class EditarTareaComponent implements OnInit {
         } else if (this.periodicidadSeleccionada === 4) {
 
           this.hora = false;
+          this.fecha = true;
           this.intervalo = true;
+          this.semana = false;
+          this.meses = false;
+          this.dias = false;
+
+        } else if (this.periodicidadSeleccionada === 1002) {
+
+          this.hora = true;
+          this.fecha = true;
+          this.intervalo = false;
           this.semana = false;
           this.meses = false;
           this.dias = false;
@@ -409,12 +399,32 @@ export class EditarTareaComponent implements OnInit {
         } else {
 
           this.hora = false;
+          this.fecha = true;
           this.intervalo = false;
           this.semana = false;
           this.meses = false;
           this.dias = false;
 
         }
+      }
+      , err => console.error(err)
+    );
+
+  }
+
+  CargaDataCombo() {
+
+    this.service.listartipoperiodicidad().subscribe(
+      res => {
+        this.response = res;
+        //console.log('this.response : ', this.response);
+        this.response.forEach(obj => {
+          console.log('obj : ', obj);
+          this.periodicidad.push({
+            id: obj.idTipoPeriodicidad,
+            periodo: obj.descTipoPeriodicidad
+          });
+        });
       }
       , err => console.error(err)
     );
