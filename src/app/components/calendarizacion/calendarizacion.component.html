@@ -60,16 +60,22 @@
 
                 <mat-table [dataSource]="dataGrillaFechas">
 
-                    
                     <!-- User name Definition -->
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef> id </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <button (click)="eliminarRowGrilla(row)">eliminar</button>
+                        </mat-cell>
+                    </ng-container>
+
                     <ng-container matColumnDef="fecha">
                         <mat-header-cell *matHeaderCellDef> Fechas </mat-header-cell>
                         <mat-cell *matCellDef="let row"> {{row.fecha}} </mat-cell>
                     </ng-container>
 
                     <!-- Header and Row Declarations -->
-                    <mat-header-row *matHeaderRowDef="['fecha']"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: ['fecha']"></mat-row>
+
+                    <mat-row *matRowDef="let row; columns: ['id','fecha']"></mat-row>
 
                 </mat-table>
 

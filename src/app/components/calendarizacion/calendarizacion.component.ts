@@ -594,33 +594,31 @@ export class CalendarizacionComponent implements OnInit {
 
   AgregarFechas() {
 
-    console.log('fecha : ', this.fechaAplicacion.toDateString)
+    let countGrilla = this.dataGrillaFechas.length;
     const stringified = JSON.stringify(this.fechaAplicacion);
     const dob = stringified.substring(1, 11);
-    console.log("dob : ", dob);
-
-
-
-
-  
-    ///Because you don't use **DataSource**, you can do the following
+    
+    
     const temp = this.dataGrillaFechas.slice();
     temp.push({
-      id: dob,
+      id: countGrilla ++,
       fecha: dob
     });
     this.dataGrillaFechas = temp;
 
+  }
 
+  eliminarRowGrilla(element) {
+    console.log('element : ', element)
 
+    const index = this.dataGrillaFechas.indexOf(element);
+    console.log('index : ', index)
+    this.dataGrillaFechas.splice(index,1);
+    const temp = this.dataGrillaFechas.slice();
+    this.dataGrillaFechas = temp;
 
   }
 
 }
 
-export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  color: string;
-}
+
