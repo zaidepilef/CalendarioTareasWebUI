@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CalendarioService } from 'src/app/services/calendario.service';
 
@@ -10,12 +11,15 @@ import { CalendarioService } from 'src/app/services/calendario.service';
   templateUrl: './calendarizacion.component.html',
   styleUrls: ['./calendarizacion.component.css']
 })
+
 export class CalendarizacionComponent implements OnInit {
 
+  @ViewChild(MatTable, { static: true }) table: MatTable<any>;
   //cajas formulario
   hora: boolean;
   fecha: boolean;
-  grilla: boolean;
+  botonAgregar: boolean;
+  grillaFechas: boolean;
   intervalo: boolean;
   semana: boolean;
   meses: boolean;
@@ -42,14 +46,14 @@ export class CalendarizacionComponent implements OnInit {
 
   response: any = [{}]
 
-  constructor(private fb: FormBuilder, private service: CalendarioService, private router: Router) {
+  dataGrillaFechas: any = [];
+  // dataGrillaFechas: MatTableDataSource<any>;
+
+
+  constructor(private fb: FormBuilder, private service: CalendarioService, private router: Router, private ref: ChangeDetectorRef) {
 
     this.form = this.fb.group({
       nombreAplicativo: new FormControl('')
-      //skills: this.buildSkills()
-      //mesesDelAnnio: this.fb.array(this.mesesDelAnnio.map(x => !1)),
-      //diasDelMes: this.fb.array(this.diasDelMes.map(x => !1)),
-      //diasDelaSemana: this.fb.array(this.diasDelaSemana.map(x => !1))
     });
     this.periodicidad = [];
     this.fechaAplicacion = new Date();
@@ -60,21 +64,6 @@ export class CalendarizacionComponent implements OnInit {
 
 
   ngOnInit(): void {
-
-    this.service.listartipoperiodicidad().subscribe(
-      res => {
-        this.response = res;
-        //console.log('this.response : ', this.response);
-        this.response.forEach(obj => {
-          //console.log('obj : ', obj);
-          this.periodicidad.push({
-            id: obj.idTipoPeriodicidad,
-            periodo: obj.descTipoPeriodicidad
-          });
-        });
-      }
-      , err => console.error(err)
-    );
 
     this.diasDelaSemana = [
       {
@@ -338,6 +327,8 @@ export class CalendarizacionComponent implements OnInit {
         checked: false
       }
     ];
+
+
   }
 
 
@@ -394,6 +385,8 @@ export class CalendarizacionComponent implements OnInit {
     if (this.periodicidadSeleccionada === 1) {
 
       this.hora = true;
+      this.grillaFechas = false;
+      this.botonAgregar = false;
       this.fecha = false;
       this.intervalo = false;
       this.semana = false;
@@ -403,6 +396,8 @@ export class CalendarizacionComponent implements OnInit {
     } else if (this.periodicidadSeleccionada === 2) {
 
       this.hora = true;
+      this.grillaFechas = false;
+      this.botonAgregar = false;
       this.fecha = false;
       this.intervalo = false;
       this.semana = true;
@@ -412,6 +407,8 @@ export class CalendarizacionComponent implements OnInit {
     } else if (this.periodicidadSeleccionada === 3) {
 
       this.hora = true;
+      this.grillaFechas = false;
+      this.botonAgregar = false;
       this.fecha = false;
       this.intervalo = false;
       this.semana = false;
@@ -421,6 +418,8 @@ export class CalendarizacionComponent implements OnInit {
     } else if (this.periodicidadSeleccionada === 4) {
 
       this.hora = false;
+      this.grillaFechas = false;
+      this.botonAgregar = false;
       this.fecha = false;
       this.intervalo = true;
       this.semana = false;
@@ -430,14 +429,19 @@ export class CalendarizacionComponent implements OnInit {
     } else if (this.periodicidadSeleccionada === 1002) {
 
       this.hora = true;
+      this.grillaFechas = true;
+      this.botonAgregar = true;
       this.fecha = true;
       this.intervalo = false;
       this.semana = false;
       this.meses = false;
       this.dias = false;
+
     } else {
 
       this.hora = false;
+      this.grillaFechas = false;
+      this.botonAgregar = false;
       this.fecha = false;
       this.intervalo = false;
       this.semana = false;
@@ -559,6 +563,7 @@ export class CalendarizacionComponent implements OnInit {
 
   }
 
+
   CargaDataCombo() {
 
     this.service.listartipoperiodicidad().subscribe(
@@ -579,4 +584,43 @@ export class CalendarizacionComponent implements OnInit {
   }
 
 
+  FechaCambia(dateObject) {
+    console.log("DATE", dateObject);
+    const stringified = JSON.stringify(dateObject.value);
+    const dob = stringified.substring(1, 11);
+    console.log("dob : ", dob);
+
+  }
+
+  AgregarFechas() {
+
+    console.log('fecha : ', this.fechaAplicacion.toDateString)
+    const stringified = JSON.stringify(this.fechaAplicacion);
+    const dob = stringified.substring(1, 11);
+    console.log("dob : ", dob);
+
+
+
+
+  
+    ///Because you don't use **DataSource**, you can do the following
+    const temp = this.dataGrillaFechas.slice();
+    temp.push({
+      id: dob,
+      fecha: dob
+    });
+    this.dataGrillaFechas = temp;
+
+
+
+
+  }
+
+}
+
+export interface UserData {
+  id: string;
+  name: string;
+  progress: string;
+  color: string;
 }
