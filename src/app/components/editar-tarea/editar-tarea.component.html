@@ -13,7 +13,7 @@
                 <mat-form-field>
                     <mat-label>Periodicidad</mat-label>
                     <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()"
-                        [ngModelOptions]="{standalone: true}">
+                        [ngModelOptions]="{standalone: true}" [disabled]="true">
                         <mat-option>-Seleccione-</mat-option>
                         <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
                             {{periodo.periodo}}
@@ -27,20 +27,48 @@
                         [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
 
-                <mat-form-field appearance="fill" *ngIf="fecha">
-                    <mat-label>Fecha</mat-label>
-                    <input matInput [matDatepicker]="picker" [(ngModel)]="fechaAplicacion"
-                        [ngModelOptions]="{standalone: true}">
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker [calendarHeaderComponent]="exampleHeader"></mat-datepicker>
-                </mat-form-field>
-
                 <mat-form-field *ngIf="hora">
                     <mat-label>Horario</mat-label>
                     <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" [(ngModel)]="horario"
                         [ngModelOptions]="{standalone: true}">
                 </mat-form-field>
 
+            </mat-card-content>
+
+            <mat-card-content>
+                <mat-form-field appearance="fill" *ngIf="fecha">
+                    <mat-label>Fecha</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="fechaAplicacion"
+                        [ngModelOptions]="{standalone: true}" (dateChange)="FechaCambia($event)">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker [calendarHeaderComponent]="exampleHeader"></mat-datepicker>
+                </mat-form-field>
+                <button *ngIf="fecha" mat-raised-button color="primary" (click)="AgregarFechas()">agregar</button>
+            </mat-card-content>
+
+        </mat-card>
+
+        <!-- grilla de las fechas almacenadas -->
+        <mat-card *ngIf="grillaFechas">
+            <mat-card-content>
+                <h4 class="mat-h4">Fechas Especificas</h4>
+                <mat-table [dataSource]="dataGrillaFechas">
+
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef> id </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <button (click)="eliminarRowGrilla(row)">eliminar</button>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="fecha">
+                        <mat-header-cell *matHeaderCellDef> Fechas </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.fecha}} </mat-cell>
+                    </ng-container>
+
+                    <mat-row *matRowDef="let row; columns: ['id','fecha']"></mat-row>
+
+                </mat-table>
             </mat-card-content>
         </mat-card>
 

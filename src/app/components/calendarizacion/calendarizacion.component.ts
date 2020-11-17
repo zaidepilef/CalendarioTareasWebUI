@@ -476,6 +476,7 @@ export class CalendarizacionComponent implements OnInit {
     this.router.navigateByUrl('/tareas');
   }
 
+  
   EnviarDiario() {
     this.dataEnvia = {
       nombreAplicativo: this.nombreAplicativo,
@@ -597,7 +598,6 @@ export class CalendarizacionComponent implements OnInit {
     let countGrilla = this.dataGrillaFechas.length;
     const stringified = JSON.stringify(this.fechaAplicacion);
     const dob = stringified.substring(1, 11);
-    
     
     const temp = this.dataGrillaFechas.slice();
     temp.push({

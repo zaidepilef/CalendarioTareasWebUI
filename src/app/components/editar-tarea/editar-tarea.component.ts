@@ -10,8 +10,11 @@ import { CalendarioService } from 'src/app/services/calendario.service';
 })
 export class EditarTareaComponent implements OnInit {
 
+  idTareaProgramada: number;
   hora: boolean;
   fecha: boolean;
+  botonAgregar: boolean;
+  grillaFechas: boolean;
   intervalo: boolean;
   semana: boolean;
   meses: boolean;
@@ -37,23 +40,14 @@ export class EditarTareaComponent implements OnInit {
     message: "",
     nombreAplicativo: ""
   };
+  dataGrillaFechas: any = [];
+  fechaAplicacion: Date;
 
   constructor(private fb: FormBuilder, private activatedRoute: ActivatedRoute, private service: CalendarioService, private router: Router) {
 
     this.form = this.fb.group({
       nombreAplicativo: new FormControl('')
-      //skills: this.buildSkills()
-      //mesesDelAnnio: this.fb.array(this.mesesDelAnnio.map(x => !1)),
-      //diasDelMes: this.fb.array(this.diasDelMes.map(x => !1)),
-      //diasDelaSemana: this.fb.array(this.diasDelaSemana.map(x => !1))
     });
-
-    this.hora = false;
-    this.fecha = false;
-    this.intervalo = false;
-    this.semana = false;
-    this.meses = false;
-    this.dias = false;
 
     this.periodicidad = [];
     this.CargaDataCombo();
@@ -327,13 +321,130 @@ export class EditarTareaComponent implements OnInit {
   ngOnInit(): void {
 
     let params: any = this.activatedRoute.snapshot.params;
+    this.idTareaProgramada = Number(params.id)
+    this.BuscaDataTarea(params.id);
+  }
 
-    this.service.BuscarCalendarioTareaProgramdaByIdTarea(params.id).subscribe(
+  FechaCambia(dateObject) {
+    console.log("DATE", dateObject);
+    const stringified = JSON.stringify(dateObject.value);
+    const dob = stringified.substring(1, 11);
+    console.log("dob : ", dob);
+
+  }
+
+
+  AgregarFechas() {
+
+    let countGrilla = this.dataGrillaFechas.length;
+    const stringified = JSON.stringify(this.fechaAplicacion);
+    const dob = stringified.substring(1, 11);
+
+    const temp = this.dataGrillaFechas.slice();
+    temp.push({
+      id: countGrilla++,
+      fecha: dob
+    });
+    this.dataGrillaFechas = temp;
+
+  }
+
+  eliminarRowGrilla(element) {
+    console.log('element : ', element)
+    const index = this.dataGrillaFechas.indexOf(element);
+    console.log('index : ', index)
+    this.dataGrillaFechas.splice(index, 1);
+    const temp = this.dataGrillaFechas.slice();
+    this.dataGrillaFechas = temp;
+
+  }
+
+  BuscaTipoFormulario() {
+
+
+    if (this.periodicidadSeleccionada === 1) {
+
+      this.hora = true;
+      this.fecha = false;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    } else if (this.periodicidadSeleccionada === 2) {
+
+      this.hora = true;
+      this.fecha = false;
+      this.intervalo = false;
+      this.semana = true;
+      this.meses = false;
+      this.dias = false;
+
+    } else if (this.periodicidadSeleccionada === 3) {
+
+      this.hora = true;
+      this.fecha = false;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = true;
+      this.dias = true;
+
+      // llena los combos
+      const mesesEntantes = this.response.meses;
+      mesesEntantes.forEach(element => {
+        const objIndex = this.mesesDelAnnio.findIndex((obj => obj.id == element));
+        this.mesesDelAnnio[objIndex].checked = true;
+      });
+
+      // llena los combos
+      const diasEntrantes = this.response.dias;
+      diasEntrantes.forEach(element => {
+        const objIndex = this.diasDelMes.findIndex((obj => obj.id == element));
+        this.diasDelMes[objIndex].checked = true;
+      });
+
+    } else if (this.periodicidadSeleccionada === 4) {
+
+      this.hora = false;
+      this.fecha = true;
+      this.intervalo = true;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    } else if (this.periodicidadSeleccionada === 1002) {
+
+      this.hora = true;
+      this.fecha = true;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    } else {
+
+      this.hora = false;
+      this.fecha = true;
+      this.intervalo = false;
+      this.semana = false;
+      this.meses = false;
+      this.dias = false;
+
+    }
+  }
+
+  BuscaDataTarea(id: any) {
+
+    this.service.BuscarCalendarioTareaProgramdaByIdTarea(id).subscribe(
       res => {
 
-        console.log("response : ", res);
         this.response = res
-        this.horario = this.response.hora;
+        console.log("this.response : ", this.response);
+
+        this.horario = this.response.hora + ":00";
+
+        console.log("this.horario : ", this.horario);
+
         this.numeroIntervalo = this.response.intervalo;
         this.periodicidadSeleccionada = this.response.codPeriodicidadProceso;
         this.nombreAplicativo = this.response.nombreAplicativo;
@@ -387,7 +498,7 @@ export class EditarTareaComponent implements OnInit {
           this.meses = false;
           this.dias = false;
 
-        } else if (this.periodicidadSeleccionada === 1002) {
+        } else if (this.periodicidadSeleccionada === 1002) {// fecha especifica
 
           this.hora = true;
           this.fecha = true;
@@ -395,6 +506,27 @@ export class EditarTareaComponent implements OnInit {
           this.semana = false;
           this.meses = false;
           this.dias = false;
+          this.grillaFechas = true;
+
+          const listaFechas = this.response.fechasEspecificas;
+          console.log('listaFechas : ', listaFechas);
+
+          const temp = this.dataGrillaFechas.slice();
+          console.log('temp antes : ', temp);
+          let countGrilla = listaFechas.length;
+
+          listaFechas.forEach(fech => {
+            console.log('fech : ', fech);
+            temp.push({
+              id: countGrilla++,
+              fecha: fech
+            });
+          });
+
+          this.dataGrillaFechas = temp;
+
+          console.log('temp despues : ', temp);
+
 
         } else {
 
@@ -409,7 +541,6 @@ export class EditarTareaComponent implements OnInit {
       }
       , err => console.error(err)
     );
-
   }
 
   CargaDataCombo() {
@@ -417,9 +548,7 @@ export class EditarTareaComponent implements OnInit {
     this.service.listartipoperiodicidad().subscribe(
       res => {
         this.response = res;
-        //console.log('this.response : ', this.response);
         this.response.forEach(obj => {
-          console.log('obj : ', obj);
           this.periodicidad.push({
             id: obj.idTipoPeriodicidad,
             periodo: obj.descTipoPeriodicidad
@@ -432,53 +561,17 @@ export class EditarTareaComponent implements OnInit {
   }
 
   PeriodicidadChange() {
-    console.log('this.periodicidadSeleccionada : ', this.periodicidadSeleccionada);
-    if (this.periodicidadSeleccionada === 1) {
 
-      this.hora = true;
-      this.intervalo = false;
-      this.semana = false;
-      this.meses = false;
-      this.dias = false;
-
-    } else if (this.periodicidadSeleccionada === 2) {
-
-      this.hora = true;
-      this.intervalo = false;
-      this.semana = true;
-      this.meses = false;
-      this.dias = false;
-
-    } else if (this.periodicidadSeleccionada === 3) {
-
-      this.hora = true;
-      this.intervalo = false;
-      this.semana = false;
-      this.meses = true;
-      this.dias = true;
-
-    } else if (this.periodicidadSeleccionada === 4) {
-
-      this.hora = false;
-      this.intervalo = true;
-      this.semana = false;
-      this.meses = false;
-      this.dias = false;
-
-    } else {
-
-      this.hora = false;
-      this.intervalo = false;
-      this.semana = false;
-      this.meses = false;
-      this.dias = false;
-
-    }
   }
 
 
   Guardar() {
-
+    console.log(' this.idTareaProgramada : ', this.idTareaProgramada);
+    console.log(' this.nombreAplicativo : ', this.nombreAplicativo);
+    console.log(' this.periodicidadSeleccionada : ', this.periodicidadSeleccionada);
+    console.log(' this.horario : ', this.horario);
+    console.log(' this.numeroIntervalo : ', this.numeroIntervalo);
+    console.log(' this.dataGrillaFechas : ', this.dataGrillaFechas);
   }
 
 
