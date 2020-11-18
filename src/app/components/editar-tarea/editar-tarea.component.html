@@ -12,8 +12,8 @@
 
                 <mat-form-field>
                     <mat-label>Periodicidad</mat-label>
-                    <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()"
-                        [ngModelOptions]="{standalone: true}" [disabled]="true">
+                    <mat-select [(ngModel)]="periodicidadSeleccionada" [ngModelOptions]="{standalone: true}"
+                        [disabled]="true">
                         <mat-option>-Seleccione-</mat-option>
                         <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
                             {{periodo.periodo}}
@@ -35,8 +35,8 @@
 
             </mat-card-content>
 
-            <mat-card-content>
-                <mat-form-field appearance="fill" *ngIf="fecha">
+            <mat-card-content *ngIf="grillaFechas">
+                <mat-form-field appearance="fill">
                     <mat-label>Fecha</mat-label>
                     <input matInput [matDatepicker]="picker" [(ngModel)]="fechaAplicacion"
                         [ngModelOptions]="{standalone: true}" (dateChange)="FechaCambia($event)">

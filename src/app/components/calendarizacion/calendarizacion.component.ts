@@ -33,6 +33,7 @@ export class CalendarizacionComponent implements OnInit {
   diasDelaSemanaSeleccionado: Array<string> = [];
   mesesDelAnnioSeleccionado: Array<string> = [];
   diasDelMesSeleccionado: Array<string> = [];
+  fechasEspecificas: Array<string> = [];
 
   form: FormGroup;
   nombreAplicativo: string;
@@ -46,10 +47,8 @@ export class CalendarizacionComponent implements OnInit {
 
   response: any = [{}]
 
-  dataGrillaFechas: any = [];
-  // dataGrillaFechas: MatTableDataSource<any>;
-
-
+  dataGrillaFechas: any[];
+  
   constructor(private fb: FormBuilder, private service: CalendarioService, private router: Router, private ref: ChangeDetectorRef) {
 
     this.form = this.fb.group({
@@ -328,10 +327,11 @@ export class CalendarizacionComponent implements OnInit {
       }
     ];
 
-
+    this.dataGrillaFechas = [];
   }
 
 
+  // dias de la semana
   semanachangeList() {
     this.diasDelaSemanaSeleccionado = [];
 
@@ -342,7 +342,7 @@ export class CalendarizacionComponent implements OnInit {
     }
   }
 
-
+  // meses del año
   meseschangeList() {
     this.mesesDelAnnioSeleccionado = [];
 
@@ -353,9 +353,9 @@ export class CalendarizacionComponent implements OnInit {
     }
   }
 
-
+  // dias del mes
   diaschangeList() {
-    this.mesesDelAnnioSeleccionado = [];
+    this.diasDelMesSeleccionado = [];
 
     for (let value of Object.values(this.diasDelMes)) {
       if (value.checked) {
@@ -466,17 +466,20 @@ export class CalendarizacionComponent implements OnInit {
       this.EnviarMensual()
     } else if (this.periodicidadSeleccionada === 4) {
       this.EnviarIntervalo()
+    } else if (this.periodicidadSeleccionada === 1002) {
+      this.EnviarFechaEspecifica()
     } else {
 
     }
 
   }
 
+
   Volver() {
     this.router.navigateByUrl('/tareas');
   }
 
-  
+
   EnviarDiario() {
     this.dataEnvia = {
       nombreAplicativo: this.nombreAplicativo,
@@ -501,7 +504,7 @@ export class CalendarizacionComponent implements OnInit {
     this.dataEnvia = {
       nombreAplicativo: this.nombreAplicativo,
       codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semana: this.diasDelaSemanaSeleccionado,
+      semanas: this.diasDelaSemanaSeleccionado,
       meses: [],
       dias: [],
       hora: this.horario,
@@ -522,15 +525,14 @@ export class CalendarizacionComponent implements OnInit {
     this.dataEnvia = {
       nombreAplicativo: this.nombreAplicativo,
       codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semana: [],
+      semanas: [],
       meses: this.mesesDelAnnioSeleccionado,
       dias: this.diasDelMesSeleccionado,
       hora: this.horario,
       intervalo: 0,
     }
 
-    console.log('this.dataEnvia : ', this.dataEnvia);
-
+  
     this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
       res => {
         console.log('res de insertar : ', res);
@@ -545,11 +547,43 @@ export class CalendarizacionComponent implements OnInit {
     this.dataEnvia = {
       nombreAplicativo: this.nombreAplicativo,
       codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semana: [],
+      semanas: [],
       meses: [],
       dias: [],
       hora: "",
-      intervalo: this.intervalo,
+      intervalo: this.numeroIntervalo,
+    }
+
+    console.log('this.dataEnvia : ', this.dataEnvia);
+
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+      }
+      , err => console.error(err)
+    );
+
+
+  }
+
+
+  EnviarFechaEspecifica() {
+
+    for (let value of Object.values(this.dataGrillaFechas)) {
+      //console.log('EnviarFechaEspecifica : ', value)
+      this.fechasEspecificas.push(value.fecha.toString());
+    }
+
+    console.log('this.nombreAplicativo : ', this.nombreAplicativo);
+    this.dataEnvia = {
+      nombreAplicativo: this.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semanas: this.diasDelaSemanaSeleccionado,
+      meses: [],
+      dias: [],
+      hora: this.horario,
+      intervalo: 0,
+      fechasEspecificas: this.fechasEspecificas
     }
 
     console.log('this.dataEnvia : ', this.dataEnvia);
@@ -593,15 +627,18 @@ export class CalendarizacionComponent implements OnInit {
 
   }
 
+
   AgregarFechas() {
 
     let countGrilla = this.dataGrillaFechas.length;
+    console.log('this.dataGrillaFechas : ', this.dataGrillaFechas);
+
     const stringified = JSON.stringify(this.fechaAplicacion);
     const dob = stringified.substring(1, 11);
-    
+
     const temp = this.dataGrillaFechas.slice();
     temp.push({
-      id: countGrilla ++,
+      id: countGrilla++,
       fecha: dob
     });
     this.dataGrillaFechas = temp;
@@ -613,7 +650,7 @@ export class CalendarizacionComponent implements OnInit {
 
     const index = this.dataGrillaFechas.indexOf(element);
     console.log('index : ', index)
-    this.dataGrillaFechas.splice(index,1);
+    this.dataGrillaFechas.splice(index, 1);
     const temp = this.dataGrillaFechas.slice();
     this.dataGrillaFechas = temp;
 

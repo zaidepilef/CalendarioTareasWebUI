@@ -18,8 +18,17 @@ export class CalendarioService {
 
 	// para ingresar una tarea
 	public insertartareasprogramadas(data: any) {
-		console.log("data recibida : ", data)
 		return this.httpClient.post(`${environment.API_URL}/calendariotareasprogramadas/`, data);
+	}
+
+	// para ediatr una tarea
+	public editartareasprogramadas(data: any) {
+		return this.httpClient.post(`${environment.API_URL}/calendariotareasprogramadas/editar`, data);
+	}
+
+	// para eliminar
+	public eliminartareasprogramadas(id: any) {
+		return this.httpClient.delete(`${environment.API_URL}/calendariotareasprogramadas/eliminar/` + id);
 	}
 
 	// editar por get
@@ -30,7 +39,5 @@ export class CalendarioService {
 	public listartipoperiodicidad() {
 		return this.httpClient.get(`${environment.API_URL}/calendariotareasprogramadas/listartipoperiodicidad/`);
 	}
-
-
 
 }

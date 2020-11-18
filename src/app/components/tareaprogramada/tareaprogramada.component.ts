@@ -7,6 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { ViewChild } from '@angular/core';
 import { Route } from '@angular/compiler/src/core';
 import { Router } from '@angular/router';
+import { CalendarioService } from 'src/app/services/calendario.service';
 
 
 
@@ -23,7 +24,7 @@ export class TareaprogramadaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  constructor(private service: TareaProgramadaServiceService, private router: Router) { }
+  constructor(private service: TareaProgramadaServiceService, private serviceEli: CalendarioService, private router: Router) { }
 
   ngOnInit() {
     this.dataSource.paginator = this.paginator;
@@ -47,12 +48,25 @@ export class TareaprogramadaComponent implements OnInit {
     this.router.navigateByUrl('/calendarizacion');
   }
 
-  editTareaItem(action, obj) {
-
-    console.log('action : ', action);
-    console.log('obj : ', obj);
+  editTareaItem(obj) {
     this.router.navigate(['/editarTarea', Number(obj.codPeriodicidadProceso)])
   }
+
+
+  borrarTareaItem(obj) {
+
+    console.log('obj : ', obj);
+
+    this.serviceEli.eliminartareasprogramadas(obj.idTareaProgramada).subscribe(
+      res => {
+        console.log('res : ', res)
+        this.router.navigate(['/tareas'])
+      }
+      , err => console.error(err)
+    );
+
+  }
+
 
   openDialog(action, obj) {
 
