@@ -507,7 +507,7 @@ export class CalendarizacionComponent implements OnInit {
           console.log('res de insertar : ', res);
 
         
-          Swal.fire('Registro exitoso...', this.titularAlerta, 'success');
+          Swal.fire('Registro exitoso...', 'Guardar', 'success');
         }
         , err => console.error(err)
       );
