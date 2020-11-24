@@ -8,6 +8,7 @@
                 <mat-form-field>
                     <mat-label>Aplicativo</mat-label>
                     <input [(ngModel)]="nombreAplicativo" matInput [ngModelOptions]="{standalone: true}">
+                    <mat-error>{{ getErrorMessage }}</mat-error>
                 </mat-form-field>
 
                 <mat-form-field>

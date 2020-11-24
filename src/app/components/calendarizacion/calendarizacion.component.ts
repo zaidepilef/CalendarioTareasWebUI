@@ -1,9 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ɵConsole } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CalendarioService } from 'src/app/services/calendario.service';
+import Swal from 'sweetalert2';
 
+import swal from 'sweetalert2';
 
 
 @Component({
@@ -48,7 +50,8 @@ export class CalendarizacionComponent implements OnInit {
   response: any = [{}]
 
   dataGrillaFechas: any[];
-  
+  getErrorMessage: string;
+
   constructor(private fb: FormBuilder, private service: CalendarioService, private router: Router, private ref: ChangeDetectorRef) {
 
     this.form = this.fb.group({
@@ -58,7 +61,7 @@ export class CalendarizacionComponent implements OnInit {
     this.fechaAplicacion = new Date();
 
     this.CargaDataCombo();
-
+    this.getErrorMessage = '';
   }
 
 
@@ -454,10 +457,7 @@ export class CalendarizacionComponent implements OnInit {
 
   Guardar() {
 
-    console.log('this.diasDelaSemanaSeleccionado : ', this.diasDelaSemanaSeleccionado);
-    console.log('this.mesesDelAnnioSeleccionado : ', this.mesesDelAnnioSeleccionado);
-    console.log('this.diasDelMesSeleccionado : ', this.diasDelMesSeleccionado);
-
+    console.log('this.periodicidadSeleccionada : ', this.periodicidadSeleccionada);
     if (this.periodicidadSeleccionada === 1) {
       this.EnviarDiario()
     } else if (this.periodicidadSeleccionada === 2) {
@@ -481,22 +481,39 @@ export class CalendarizacionComponent implements OnInit {
 
 
   EnviarDiario() {
-    this.dataEnvia = {
-      nombreAplicativo: this.nombreAplicativo,
-      codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semana: this.diasDelaSemanaSeleccionado,
-      meses: [],
-      dias: [],
-      hora: this.horario,
-      intervalo: 0,
-    }
-    console.log('this.dataEnvia : ', this.dataEnvia);
-    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
-      res => {
-        console.log('res de insertar : ', res);
+    console.log('nombreAplicativo', this.nombreAplicativo);
+    console.log('horario', this.horario);
+
+    if (this.nombreAplicativo == "" || this.nombreAplicativo == undefined) {
+      this.getErrorMessage = 'Nombre aplicativo es requerido'
+      alert('Nombre aplicativo es requerido');
+    } else if (this.horario == "" || this.horario == undefined) {
+      this.getErrorMessage = 'Horario aplicativo es requerido';
+      alert('Horario aplicativo es requerido');
+    } else {
+
+      this.dataEnvia = {
+        nombreAplicativo: this.nombreAplicativo,
+        codPeriodicidadProceso: this.periodicidadSeleccionada,
+        semana: this.diasDelaSemanaSeleccionado,
+        meses: [],
+        dias: [],
+        hora: this.horario,
+        intervalo: 0,
       }
-      , err => console.error(err)
-    );
+
+      this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+        res => {
+          console.log('res de insertar : ', res);
+
+        
+          Swal.fire('Registro exitoso...', this.titularAlerta, 'success');
+        }
+        , err => console.error(err)
+      );
+
+    }
+
   }
 
 
@@ -510,7 +527,7 @@ export class CalendarizacionComponent implements OnInit {
       hora: this.horario,
       intervalo: 0,
     }
-    console.log('this.dataEnvia : ', this.dataEnvia);
+
     this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
       res => {
         console.log('res de insertar : ', res);
@@ -532,7 +549,7 @@ export class CalendarizacionComponent implements OnInit {
       intervalo: 0,
     }
 
-  
+
     this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
       res => {
         console.log('res de insertar : ', res);
