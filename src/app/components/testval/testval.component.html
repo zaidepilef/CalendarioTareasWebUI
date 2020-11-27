@@ -1,0 +1,27 @@
+<h3>Test</h3>
+    <form 
+      [formGroup]="form">
+      <mat-form-field>
+        <input matInput
+          spellcheck="false"
+          placeholder="User name"
+          formControlName="userName">
+        <mat-hint>
+          User name allowed characters are letters and numbers only. No spaces.
+        </mat-hint>
+        <mat-error>
+          {{ formErrors['userName'] }}
+        </mat-error>
+      </mat-form-field>
+
+
+      <div class="form-button-row">
+        <button mat-raised-button
+          [disabled]="!form.valid"
+          (click)="registerClicked();"
+          color="primary">Register</button>
+       
+      </div>
+
+
+    </form>

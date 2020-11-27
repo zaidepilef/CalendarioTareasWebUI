@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { CalendarizacionComponent } from './components/calendarizacion/calendarizacion.component';
 import { EditarTareaComponent } from './components/editar-tarea/editar-tarea.component';
 import { TareaprogramadaComponent } from './components/tareaprogramada/tareaprogramada.component';
+import { TestvalComponent } from './components/testval/testval.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 
@@ -24,7 +25,11 @@ const routes: Routes = [
     pathMatch: 'full',
     component: TareaprogramadaComponent
   },
-
+  {
+    path: 'test',
+    pathMatch: 'full',
+    component: TestvalComponent
+  },
   {
     path: '404',
     component: NotFoundComponent

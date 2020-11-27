@@ -17,6 +17,7 @@ import { LayoutComponent } from './shared/layout/layout.component';
 import { TareaprogramadaComponent } from './components/tareaprogramada/tareaprogramada.component';
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { EditarTareaComponent } from './components/editar-tarea/editar-tarea.component';
+import { TestvalComponent } from './components/testval/testval.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { EditarTareaComponent } from './components/editar-tarea/editar-tarea.com
     FooterComponent,
     HeaderComponent,
     LayoutComponent,
-    TareaprogramadaComponent, EditarTareaComponent
+    TareaprogramadaComponent, EditarTareaComponent,
+    TestvalComponent
   ],
   imports: [
     BrowserModule,
