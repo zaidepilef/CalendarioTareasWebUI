@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CrossFieldErrorMatcher } from '../../utilidades/cross-field-error-matcher';
 import { FormComponentBase } from '../../utilidades/form-component-base';
 import { Router } from '@angular/router';
-import swal from'sweetalert2';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-testval',
@@ -17,7 +17,7 @@ export class TestvalComponent extends FormComponentBase implements OnInit, After
   form!: FormGroup;
   errorMatcher = new CrossFieldErrorMatcher();
 
-  
+
 
 
   constructor(private formBuilder: FormBuilder, private router: Router) {
@@ -33,18 +33,22 @@ export class TestvalComponent extends FormComponentBase implements OnInit, After
 
     this.formErrors = {
       userName: '',
-      };
+    };
 
   }
 
-    ngOnInit() {
-      this.form = this.formBuilder.group({
+  ngOnInit() {
+    this.form = this.formBuilder.group(
+      {
         userName: ['', [
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(15),
-          Validators.pattern('^[a-zA-Z0-9]*$')]],
-        });
+          Validators.pattern('^[a-zA-Z0-9]*$')
+        ]
+        ],
+      }
+    );
   }
 
 
@@ -56,22 +60,22 @@ export class TestvalComponent extends FormComponentBase implements OnInit, After
 
     swal.fire({
       title: 'Registro Guardado',
-       text: "",
-       icon: 'success',
-       showCancelButton: false,
-       confirmButtonColor: '#3085d6',
-       //cancelButtonColor: '#d33',
-       confirmButtonText: 'OK'
-     }).then((result) => {
-       if (result.isConfirmed) {
+      text: "",
+      icon: 'success',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      //cancelButtonColor: '#d33',
+      confirmButtonText: 'OK'
+    }).then((result) => {
+      if (result.isConfirmed) {
         this.router.navigateByUrl('/aplicativos');
         //  swal.fire(
         //    'Deleted!',
         //    'Your file has been deleted.',
         //    'success'
         //  )
-       }
-     })
+      }
+    })
 
 
     // const swalWithBootstrapButtons = swal.mixin({

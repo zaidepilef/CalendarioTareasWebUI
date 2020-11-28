@@ -1,12 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ɵConsole } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { CalendarioService } from 'src/app/services/calendario.service';
-import Swal from 'sweetalert2';
-
-import swal from 'sweetalert2';
-
+import { CrossFieldErrorMatcher } from '../../utilidades/cross-field-error-matcher';
+import { FormComponentBase } from '../../utilidades/form-component-base';
+import { CustomValidators } from './custom.validators';
 
 @Component({
   selector: 'app-calendarizacion',
@@ -14,9 +13,13 @@ import swal from 'sweetalert2';
   styleUrls: ['./calendarizacion.component.css']
 })
 
-export class CalendarizacionComponent implements OnInit {
-
+//export class CalendarizacionComponent extends FormComponentBase implements OnInit {
+export class CalendarizacionComponent extends FormComponentBase implements OnInit, AfterViewInit {
   @ViewChild(MatTable, { static: true }) table: MatTable<any>;
+
+  form!: FormGroup;
+  errorMatcher = new CrossFieldErrorMatcher();
+
   //cajas formulario
   hora: boolean;
   fecha: boolean;
@@ -37,7 +40,7 @@ export class CalendarizacionComponent implements OnInit {
   diasDelMesSeleccionado: Array<string> = [];
   fechasEspecificas: Array<string> = [];
 
-  form: FormGroup;
+  //form: FormGroup;
   nombreAplicativo: string;
   periodicidadSeleccionada: number;
   numeroIntervalo: number;
@@ -50,23 +53,95 @@ export class CalendarizacionComponent implements OnInit {
   response: any = [{}]
 
   dataGrillaFechas: any[];
-  getErrorMessage: string;
+
+
+  fg: FormGroup;
+  businessUnits: any[] = [];
+
+
+  /// nuevos formularios
+  formulariodefault: boolean;
+  formulariodiario: boolean;
+  formGroupDiario: FormGroup;
+
+  formulariosemanal: boolean;
+  formGroupSemanal: FormGroup;
+
+  formulariomensual: boolean;
+  formGroupMensual: FormGroup;
 
   constructor(private fb: FormBuilder, private service: CalendarioService, private router: Router, private ref: ChangeDetectorRef) {
 
-    this.form = this.fb.group({
-      nombreAplicativo: new FormControl('')
-    });
+    super();
+    this.validationMessages = {
+      nombreAplicativo: {
+        required: 'Nombre Aplicativo es obligatorio.',
+      },
+      diasDelaSemana: {
+        required: 'Seleccione al menos un día de la Semana.',
+      }
+    };
+
+    this.formErrors = {
+      nombreAplicativo: '',
+      diasDelaSemana: '',
+    };
+
     this.periodicidad = [];
     this.fechaAplicacion = new Date();
 
     this.CargaDataCombo();
-    this.getErrorMessage = '';
+
+    /*
+    this.formulariodiario = this.fb.group({
+      nombreAplicativo: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(15),
+        Validators.pattern('^[a-zA-Z0-9]*$')
+      ]
+      ],
+      horarioAplicativo: ['', [
+        Validators.required
+      ]
+      ],
+
+    })
+    */
+
+    /*
+    this.formulariosemanal = this.fb.group({
+      nombreAplicativo: ['',
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(15),
+          Validators.pattern('^[a-zA-Z0-9]*$')
+        ]
+      ],
+      horarioAplicativo: ['',
+        [
+          Validators.required
+        ]
+      ],
+    })
+    */
+
   }
 
+  submitFormSemanal() {
+    console.log(this.form.value)
+  }
+
+  onSubmit() {
+    console.log('fg : ', this.fg);
+    console.log('controls : ', this.fg.controls);
+    console.log('bUnits : ', this.fg.controls.bUnits);
+  }
 
   ngOnInit(): void {
 
+    this.formulariodefault= true;
     this.diasDelaSemana = [
       {
         id: 1,
@@ -331,18 +406,148 @@ export class CalendarizacionComponent implements OnInit {
     ];
 
     this.dataGrillaFechas = [];
+
+    this.businessUnits = [
+      { name: 'BU 1', value: "1" },
+      { name: 'BU 2', value: "2" },
+      { name: 'BU 3', value: "3" }
+    ];
+
+    this.fg = this.fb.group({
+      firstName: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(15),
+        Validators.pattern('^[a-zA-Z0-9]*$')
+      ]],
+      bUnits: this.fb.array(
+        this.businessUnits.map(() => this.fb.control('')),
+        CustomValidators.multipleCheckboxRequireOne
+      )
+    });
+
+
+    this.formGroupDiario = this.fb.group({
+      nombreAplicativo: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(15),
+        Validators.pattern('^[a-zA-Z0-9]*$')
+      ]],
+      horario: ['', [
+        Validators.required
+      ]]
+    });
+
+    this.formGroupSemanal = this.fb.group({
+      nombreAplicativo: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(15),
+        Validators.pattern('^[a-zA-Z0-9]*$')
+      ]],
+      horario: ['', [
+        Validators.required
+      ]],
+      diasSemana: this.fb.array(
+        this.diasDelaSemana.map(() => this.fb.control('')),
+        CustomValidators.multipleCheckboxRequireOne
+      )
+    });
+
+    this.formGroupMensual = this.fb.group({
+      nombreAplicativo: ['', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.maxLength(15),
+        Validators.pattern('^[a-zA-Z0-9]*$')
+      ]],
+      horario: ['', [
+        Validators.required
+      ]],
+      meses: this.fb.array(
+        this.mesesDelAnnio.map(() => this.fb.control('')),
+        CustomValidators.multipleCheckboxRequireOne
+      ),
+      dias: this.fb.array(
+        this.diasDelMes.map(() => this.fb.control('')),
+        CustomValidators.multipleCheckboxRequireOne
+      )
+    });
+
+
   }
 
 
+  // periodicidad change combo box
+  comboPeriodicidadChange() {
+    
+    if (this.periodicidadSeleccionada === 1) {
+      this.formulariodefault= false;
+      this.formulariodiario = true;
+      this.formulariosemanal = false;
+      this.formulariomensual = false;
+
+    } else if (this.periodicidadSeleccionada === 2) {
+      this.formulariodefault= false;
+      this.formulariodiario = false;
+      this.formulariosemanal = true;
+      this.formulariomensual = false;
+      
+    } else if (this.periodicidadSeleccionada === 3) {
+      this.formulariodefault= false;
+      this.formulariodiario = false;
+      this.formulariosemanal = false;
+      this.formulariomensual = true;
+
+    } else if (this.periodicidadSeleccionada === 4) {
+      this.formulariodefault= false;
+      this.formulariodiario = false;
+      this.formulariosemanal = false;
+      this.formulariomensual = false;
+
+    } else if (this.periodicidadSeleccionada === 1002) {
+      this.formulariodefault= false;
+      this.formulariodiario = false;
+      this.formulariosemanal = false;
+      this.formulariomensual = false;
+
+    } else {
+      this.formulariodefault= true;
+      this.formulariodiario = false;
+      this.formulariosemanal = false;
+      this.formulariomensual = false;
+
+    }
+
+  }
+
+
+
   // dias de la semana
-  semanachangeList() {
+  semanachangeList(e) {
+
+    /*
+    console.log('diasSemanaChekArray', this.formulariosemanal.get('diasSemanaChekArray'));
+
+    let diasSemanaChekArray: FormArray = this.formulariosemanal.get('diasSemanaChekArray') as FormArray;
     this.diasDelaSemanaSeleccionado = [];
 
     for (let value of Object.values(this.diasDelaSemana)) {
       if (value.checked) {
         this.diasDelaSemanaSeleccionado.push(value.id.toString());
+        diasSemanaChekArray.push(
+          new FormControl(
+            value.id.toString()
+          )
+        );
+
       }
     }
+    console.log('diasSemanaChekArray : ', diasSemanaChekArray.value);
+   */
+
+
   }
 
   // meses del año
@@ -457,7 +662,10 @@ export class CalendarizacionComponent implements OnInit {
 
   Guardar() {
 
-    console.log('this.periodicidadSeleccionada : ', this.periodicidadSeleccionada);
+    console.log('this.diasDelaSemanaSeleccionado : ', this.diasDelaSemanaSeleccionado);
+    console.log('this.mesesDelAnnioSeleccionado : ', this.mesesDelAnnioSeleccionado);
+    console.log('this.diasDelMesSeleccionado : ', this.diasDelMesSeleccionado);
+
     if (this.periodicidadSeleccionada === 1) {
       this.EnviarDiario()
     } else if (this.periodicidadSeleccionada === 2) {
@@ -481,39 +689,31 @@ export class CalendarizacionComponent implements OnInit {
 
 
   EnviarDiario() {
-    console.log('nombreAplicativo', this.nombreAplicativo);
-    console.log('horario', this.horario);
+    this.dataEnvia = {
+      nombreAplicativo: this.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semana: this.diasDelaSemanaSeleccionado,
+      meses: [],
+      dias: [],
+      hora: this.horario,
+      intervalo: 0,
+    }
 
     if (this.nombreAplicativo == "" || this.nombreAplicativo == undefined) {
-      this.getErrorMessage = 'Nombre aplicativo es requerido'
-      alert('Nombre aplicativo es requerido');
+
     } else if (this.horario == "" || this.horario == undefined) {
-      this.getErrorMessage = 'Horario aplicativo es requerido';
-      alert('Horario aplicativo es requerido');
-    } else {
 
-      this.dataEnvia = {
-        nombreAplicativo: this.nombreAplicativo,
-        codPeriodicidadProceso: this.periodicidadSeleccionada,
-        semana: this.diasDelaSemanaSeleccionado,
-        meses: [],
-        dias: [],
-        hora: this.horario,
-        intervalo: 0,
-      }
-
-      this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
-        res => {
-          console.log('res de insertar : ', res);
-
-        
-          Swal.fire('Registro exitoso...', 'Guardar', 'success');
-        }
-        , err => console.error(err)
-      );
 
     }
 
+
+    console.log('this.dataEnvia : ', this.dataEnvia);
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+      }
+      , err => console.error(err)
+    );
   }
 
 
@@ -527,7 +727,7 @@ export class CalendarizacionComponent implements OnInit {
       hora: this.horario,
       intervalo: 0,
     }
-
+    console.log('this.dataEnvia : ', this.dataEnvia);
     this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
       res => {
         console.log('res de insertar : ', res);
@@ -672,6 +872,16 @@ export class CalendarizacionComponent implements OnInit {
     this.dataGrillaFechas = temp;
 
   }
+
+
+  ngAfterViewInit(): void {
+    // setTimeout(() => {
+    //   this.firstItem.nativeElement.focus();
+    // }, 250);
+    this.startControlMonitoring(this.form);
+  }
+
+
 
 }
 
