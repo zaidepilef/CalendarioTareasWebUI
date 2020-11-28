@@ -1,5 +1,131 @@
 <mat-card class="example-card">
-    <form [formGroup]="form">
+
+    <form (ngSubmit)="onSubmit()" novalidate [formGroup]="fg">
+        <div>
+            <input type="text" formControlName="firstName" class="form-control" placeholder="First name">
+        </div>
+
+        <div formArrayName="bUnits">
+            <div *ngFor="let unit of businessUnits; let i = index;">
+                <p>Unit {{ i + 1 }}</p>
+                <div>
+                    <label>
+                        <input type="checkbox" [formControlName]="i" [value]="businessUnits[i].value">
+                        {{businessUnits[i].name}}
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit">Submit</button>
+        <p>Status {{ fg.valid }}</p>
+    </form>
+
+</mat-card>
+
+<mat-card class="example-card">
+    <form *ngIf="formulariodiario" (ngSubmit)="onSubmitdiario()" novalidate [formGroup]="formGroupDiario">
+
+        <mat-form-field>
+            <mat-label>Periodicidad</mat-label>
+            <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="comboPeriodicidadChange()"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option>-Seleccione-</mat-option>
+                <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
+                    {{periodo.periodo}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput spellcheck="false" placeholder="Nombre Aplicativo" formControlName="nombreAplicativo">
+            <small class="text-danger" *ngIf="formGroupDiario.get('nombreAplicativo').hasError('required')">
+                Campo requerido.
+            </small>
+            <small class="text-danger" *ngIf="formGroupDiario.get('nombreAplicativo').hasError('minlength')">
+                Minimo de caracteres.
+            </small>
+            <small class="text-danger" *ngIf="formGroupDiario.get('nombreAplicativo').hasError('maxlength')">
+                Maximo de caracteres.
+            </small>
+        </mat-form-field>
+
+
+        <mat-form-field *ngIf="hora">
+            <mat-label>Horario</mat-label>
+            <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" formControlName="horario"
+                [(ngModel)]="horario" [ngModelOptions]="{standalone: true}">
+
+            <small class="text-danger" *ngIf="formGroupDiario.get('horario').hasError('required')">
+                Campo requerido.
+            </small>
+
+        </mat-form-field>
+
+    </form>
+</mat-card>
+
+<mat-card class="example-card">
+    <form *ngIf="formulariosemanal" (ngSubmit)="onSubmitSemanal()" novalidate [formGroup]="formGroupSemanal">
+
+        <mat-form-field>
+            <mat-label>Periodicidad</mat-label>
+            <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="PeriodicidadChange()"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option>-Seleccione-</mat-option>
+                <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
+                    {{periodo.periodo}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput spellcheck="false" placeholder="Nombre Aplicativo" formControlName="nombreAplicativo">
+            <small *ngIf="formGroupSemanal.get('nombreAplicativo').hasError('required')">
+                Campo requerido.
+            </small>
+            <small *ngIf="formGroupSemanal.get('nombreAplicativo').hasError('minlength')">
+                Minimo de caracteres.
+            </small>
+            <small class="text-danger" *ngIf="formGroupSemanal.get('nombreAplicativo').hasError('maxlength')">
+                Maximo de caracteres.
+            </small>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Horario</mat-label>
+            <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" formControlName="horario"
+                [(ngModel)]="horario" [ngModelOptions]="{standalone: true}">
+
+            <small class="text-danger" *ngIf="formGroupSemanal.get('horario').hasError('required')">
+                Campo requerido.
+            </small>
+
+        </mat-form-field>
+
+        <mat-card>
+            <div formArrayName="diasSemana">
+                <div *ngFor="let unit of diasDelaSemana; let i = index;">
+                    
+                    <div>
+                        <label>
+                            <input type="checkbox" [formControlName]="i" [value]="diasDelaSemana[i].value">
+                            {{diasDelaSemana[i].name}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+
+    </form>
+</mat-card>
+
+
+
+<mat-card class="example-card">
+
+
+    <form>
         <h2>Generar Calendario de Tareas</h2>
 
         <mat-card>
