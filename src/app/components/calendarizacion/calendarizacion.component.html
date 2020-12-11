@@ -11,7 +11,9 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
+
     </form>
+
 
     <form *ngIf="formulariodiario" (ngSubmit)="onSubmitdiario()" novalidate [formGroup]="formGroupDiario">
 
@@ -27,13 +29,17 @@
         </mat-form-field>
 
         <mat-form-field>
+            <mat-label>Nombre aplicativo</mat-label>
             <input matInput spellcheck="false" placeholder="Nombre Aplicativo" formControlName="nombreAplicativo">
+
             <small class="text-danger" *ngIf="formGroupDiario.get('nombreAplicativo').hasError('required')">
                 Campo requerido.
             </small>
+
             <small class="text-danger" *ngIf="formGroupDiario.get('nombreAplicativo').hasError('minlength')">
                 Minimo de caracteres.
             </small>
+
             <small class="text-danger" *ngIf="formGroupDiario.get('nombreAplicativo').hasError('maxlength')">
                 Maximo de caracteres.
             </small>
@@ -52,6 +58,7 @@
         </mat-form-field>
 
     </form>
+
 
     <form *ngIf="formulariosemanal" (ngSubmit)="onSubmitSemanal()" novalidate [formGroup]="formGroupSemanal">
 
@@ -99,14 +106,14 @@
                 </div>
             </div>
 
-
-           
-
         </mat-card>
+
         <p>Status {{ formGroupSemanal.valid }}</p>
         <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
         <button mat-raised-button color="primary" type="submit">Guardar</button>
+
     </form>
+
 
     <form *ngIf="formulariomensual" (ngSubmit)="onSubmitMensual()" novalidate [formGroup]="formGroupMensual">
 
@@ -173,12 +180,148 @@
     </form>
 
 
+    <form *ngIf="formulariointervalohora" (ngSubmit)="onSubmitIntervaloHora()" novalidate
+        [formGroup]="formGroupIntervaloHora">
+
+        <mat-form-field>
+            <mat-label>Periodicidad</mat-label>
+            <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="comboPeriodicidadChange()"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option>-Seleccione-</mat-option>
+                <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
+                    {{periodo.periodo}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Nombre aplicativo</mat-label>
+            <input matInput spellcheck="false" placeholder="Nombre Aplicativo" formControlName="nombreAplicativo">
+            <small *ngIf="formGroupIntervaloHora.get('nombreAplicativo').hasError('required')">
+                Campo requerido.
+            </small>
+            <small *ngIf="formGroupIntervaloHora.get('nombreAplicativo').hasError('minlength')">
+                Minimo de caracteres.
+            </small>
+            <small class="text-danger" *ngIf="formGroupIntervaloHora.get('nombreAplicativo').hasError('maxlength')">
+                Maximo de caracteres.
+            </small>
+        </mat-form-field>
+
+
+        <mat-form-field>
+            <mat-label>Intervalo</mat-label>
+            <input matInput spellcheck="false" placeholder="Nombre Aplicativo" formControlName="nombreAplicativo">
+            <small *ngIf="formGroupMensual.get('nombreAplicativo').hasError('required')">
+                Campo requerido.
+            </small>
+
+        </mat-form-field>
+
+
+        <p>Status {{ formGroupSemanal.valid }}</p>
+        <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
+        <button mat-raised-button color="primary" type="submit">Guardar</button>
+
+    </form>
+
+
+    <form *ngIf="formulariofechaespecifica" (ngSubmit)="onSubmitFechaEspecifica()" novalidate
+        [formGroup]="formGroupFechaEspecifica">
+
+        <mat-form-field>
+            <mat-label>Periodicidad</mat-label>
+            <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="comboPeriodicidadChange()"
+                [ngModelOptions]="{standalone: true}">
+                <mat-option>-Seleccione-</mat-option>
+                <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
+                    {{periodo.periodo}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput spellcheck="false" placeholder="Nombre Aplicativo" formControlName="nombreAplicativo">
+            <small *ngIf="formGroupFechaEspecifica.get('nombreAplicativo').hasError('required')">
+                Campo requerido.
+            </small>
+            <small *ngIf="formGroupFechaEspecifica.get('nombreAplicativo').hasError('minlength')">
+                Minimo de caracteres.
+            </small>
+            <small class="text-danger" *ngIf="formGroupFechaEspecifica.get('nombreAplicativo').hasError('maxlength')">
+                Maximo de caracteres.
+            </small>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Horario</mat-label>
+            <input matInput type="time" id="appt" name="appt" min="09:00" max="18:00" formControlName="horario"
+                [(ngModel)]="horario" [ngModelOptions]="{standalone: true}">
+
+            <small class="text-danger" *ngIf="formGroupFechaEspecifica.get('horario').hasError('required')">
+                Campo requerido.
+            </small>
+
+        </mat-form-field>
+
+        <mat-card-content>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Fecha</mat-label>
+                <input matInput [matDatepicker]="picker" [(ngModel)]="fechaAplicacion"
+                    [ngModelOptions]="{standalone: true}" (dateChange)="FechaCambia($event)">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker [calendarHeaderComponent]="exampleHeader"></mat-datepicker>
+            </mat-form-field>
+
+            <button type="button" mat-raised-button color="primary" (click)="AgregarFechas()">agregar</button>
+
+        </mat-card-content>
+
+        <mat-card>
+
+            <mat-card-content>
+
+                <h4 class="mat-h4">Fechas Especificas</h4>
+
+                <mat-table [dataSource]="dataGrillaFechas">
+
+                    <!-- User name Definition -->
+                    <ng-container matColumnDef="id">
+                        <mat-header-cell *matHeaderCellDef> id </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <button (click)="eliminarRowGrilla(row)">eliminar</button>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="fecha">
+                        <mat-header-cell *matHeaderCellDef> Fechas </mat-header-cell>
+                        <mat-cell *matCellDef="let row"> {{row.fecha}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Header and Row Declarations -->
+
+                    <mat-row *matRowDef="let row; columns: ['id','fecha']"></mat-row>
+
+                </mat-table>
+
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+        <p>Status {{ formGroupSemanal.valid }}</p>
+        <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
+        <button mat-raised-button color="primary" type="submit">Guardar</button>
+    </form>
+
+
+
 </mat-card>
 
 
-
 <mat-card class="example-card">
-
 
     <form>
         <h2>Generar Calendario de Tareas</h2>
