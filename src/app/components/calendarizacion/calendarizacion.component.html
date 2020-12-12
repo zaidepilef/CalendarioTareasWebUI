@@ -1,6 +1,7 @@
 <mat-card class="example-card">
 
-    <form *ngIf="formulariodefault" novalidate [formGroup]="formGroupDiario">
+
+    <form *ngIf="formulariodefault" novalidate>
         <mat-form-field>
             <mat-label>Periodicidad</mat-label>
             <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="comboPeriodicidadChange()"
@@ -19,13 +20,16 @@
 
         <mat-form-field>
             <mat-label>Periodicidad</mat-label>
-            <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="comboPeriodicidadChange()"
-                [ngModelOptions]="{standalone: true}">
+            <mat-select [(ngModel)]="periodicidadSeleccionada" formControlName="periodicidad"
+                (selectionChange)="comboPeriodicidadChange()" [ngModelOptions]="{standalone: true}">
                 <mat-option>-Seleccione-</mat-option>
                 <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
                     {{periodo.periodo}}
                 </mat-option>
             </mat-select>
+            <small class="text-danger" *ngIf="formGroupDiario.get('nombreAplicativo').hasError('required')">
+                Campo requerido.
+            </small>
         </mat-form-field>
 
         <mat-form-field>
@@ -56,21 +60,26 @@
             </small>
 
         </mat-form-field>
-
+        <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
+        <button mat-raised-button color="primary" [disabled]="!formGroupDiario.valid" type="submit">Guardar</button>
     </form>
 
 
-    <form *ngIf="formulariosemanal" (ngSubmit)="onSubmitSemanal()" novalidate [formGroup]="formGroupSemanal">
+    <form *ngIf="formulariosemanal" (ngSubmit)="onSubmitSemanal()" novalidate [formGroup]="formGroupSemanal"
+        validate-non-visible-controls>
 
         <mat-form-field>
             <mat-label>Periodicidad</mat-label>
-            <mat-select [(ngModel)]="periodicidadSeleccionada" (selectionChange)="comboPeriodicidadChange()"
-                [ngModelOptions]="{standalone: true}">
+            <mat-select [(ngModel)]="periodicidadSeleccionada" formControlName="periodicidad"
+                (selectionChange)="comboPeriodicidadChange()" [ngModelOptions]="{standalone: true}">
                 <mat-option>-Seleccione-</mat-option>
                 <mat-option *ngFor="let periodo of periodicidad" [value]="periodo.id">
                     {{periodo.periodo}}
                 </mat-option>
             </mat-select>
+            <small class="text-danger" *ngIf="formGroupSemanal.get('nombreAplicativo').hasError('required')">
+                Campo requerido.
+            </small>
         </mat-form-field>
 
         <mat-form-field>
@@ -99,18 +108,30 @@
 
         <mat-card>
 
+
             <div formArrayName="diasSemana">
                 <div *ngFor="let unit of diasDelaSemana; let i = index;">
-                    <input type="checkbox" [formControlName]="i" [value]="diasDelaSemana[i].value">
+                    <input type="checkbox" [formControlName]="i" [value]="diasDelaSemana[i]">
                     {{diasDelaSemana[i].dia}}
                 </div>
             </div>
 
+            <mat-grid-list cols="4" rowHeight="50px">
+                <mat-grid-tile *ngFor="let dias of diasDelaSemana">
+                    <mat-checkbox [(ngModel)]="dias.checked" (change)="semanachangeList()"
+                        [ngModelOptions]="{standalone: true}">
+                        {{dias.dia}}
+                    </mat-checkbox>
+                </mat-grid-tile>
+            </mat-grid-list>
+
         </mat-card>
 
         <p>Status {{ formGroupSemanal.valid }}</p>
+        <p>countDiasdelaSemana {{ countDiasdelaSemana}}</p>
         <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
-        <button mat-raised-button color="primary" type="submit">Guardar</button>
+        <button mat-raised-button color="primary" type="submit"
+            [disabled]="!formGroupSemanal.valid && countDiasdelaSemana ==0">Guardar</button>
 
     </form>
 
@@ -176,7 +197,7 @@
 
         <p>Status {{ formGroupSemanal.valid }}</p>
         <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
-        <button mat-raised-button color="primary" type="submit">Guardar</button>
+        <button mat-raised-button color="primary" [disabled]="!formGroupSemanal.valid" type="submit">Guardar</button>
     </form>
 
 
@@ -221,7 +242,7 @@
 
         <p>Status {{ formGroupSemanal.valid }}</p>
         <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
-        <button mat-raised-button color="primary" type="submit">Guardar</button>
+        <button mat-raised-button color="primary" [disabled]="!formGroupSemanal.valid" type="submit">Guardar</button>
 
     </form>
 
@@ -305,15 +326,15 @@
 
                 </mat-table>
 
-
             </mat-card-content>
 
         </mat-card>
 
-
-        <p>Status {{ formGroupSemanal.valid }}</p>
+        <p>Status {{ formGroupFechaEspecifica.valid }}</p>
         <button mat-raised-button color="defaut" (click)="Volver()">Volver</button>
-        <button mat-raised-button color="primary" type="submit">Guardar</button>
+        <button mat-raised-button color="primary" [disabled]="!formGroupFechaEspecifica.valid"
+            type="submit">Guardar</button>
+
     </form>
 
 

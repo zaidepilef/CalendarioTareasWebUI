@@ -15,7 +15,7 @@ import swal from 'sweetalert2';
 })
 
 //export class CalendarizacionComponent extends FormComponentBase implements OnInit {
-export class CalendarizacionComponent extends FormComponentBase implements OnInit, AfterViewInit {
+export class CalendarizacionComponent extends FormComponentBase implements OnInit {
 	@ViewChild(MatTable, { static: true }) table: MatTable<any>;
 
 	form!: FormGroup;
@@ -37,6 +37,7 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 	diasDelMes: any[];
 
 	diasDelaSemanaSeleccionado: Array<string> = [];
+	countDiasdelaSemana: number = 0;
 	mesesDelAnnioSeleccionado: Array<string> = [];
 	diasDelMesSeleccionado: Array<string> = [];
 	fechasEspecificas: Array<string> = [];
@@ -137,18 +138,76 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 	}
 
-	//onSubmitdiario
 	//onSubmitSemanal
 	//onSubmitMensual
 	//onSubmitIntervaloHora
 	//onSubmitFechaEspecifica
 
+	//onSubmitdiario OK
 	onSubmitdiario() {
 		console.log(this.formGroupDiario.value)
+
+		this.dataEnvia = {
+			nombreAplicativo: this.formGroupDiario.value.nombreAplicativo,
+			codPeriodicidadProceso: this.periodicidadSeleccionada,
+			meses: [],
+			dias: [],
+			hora: this.formGroupDiario.value.horario,
+			intervalo: 0,
+		}
+		console.log('this.dataEnvia : ', this.dataEnvia);
+		this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+			res => {
+				console.log('res de insertar : ', res);
+				swal.fire('Exito', 'Datos de ingresados', 'success');
+			}
+			, err => console.error(err)
+		);
 	}
 
 	onSubmitSemanal() {
-		console.log(this.formGroupSemanal.value)
+		//console.log('formGroupSemanal : ', this.formGroupSemanal.value)
+		//this.diasDelaSemanaSeleccionado
+		//let diasSemanaChekArray: FormArray = this.formGroupSemanal.get('diasSemanaChekArray') as FormArray;
+		//this.diasDelaSemanaSeleccionado = [];
+		/*
+				for (let value of Object.values(this.diasDelaSemana)) {
+					if (value.checked) {
+						this.diasDelaSemanaSeleccionado.push(value.id.toString());
+						diasSemanaChekArray.push(
+							new FormControl(
+								value.id.toString()
+							)
+						);
+		
+					}
+				}
+				*/
+		console.log('this.diasDelaSemanaSeleccionado : ', this.diasDelaSemanaSeleccionado)
+
+
+		/*
+				const valueToStore = Object.assign({}, this.formGroupSemanal, {
+					diasSemana: this.convertToValue('diasSemana')
+				});
+				console.log('valueToStore : ', valueToStore);
+		*/
+		this.dataEnvia = {
+			nombreAplicativo: this.formGroupSemanal.value.nombreAplicativo,
+			codPeriodicidadProceso: this.periodicidadSeleccionada,
+			semanas: this.diasDelaSemanaSeleccionado,
+			meses: [],
+			dias: [],
+			hora: this.formGroupSemanal.value.horario,
+			intervalo: 0,
+		}
+		console.log('this.dataEnvia : ', this.dataEnvia);
+		this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+			res => {
+				console.log('res de insertar : ', res);
+			}
+			, err => console.error(err)
+		);
 	}
 
 	onSubmitMensual() {
@@ -160,14 +219,18 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 	}
 
 	onSubmitFechaEspecifica() {
+
 		console.log(this.formGroupFechaEspecifica.value)
+
 		if (this.dataGrillaFechas.length == 0) {
 			swal.fire('Agregue al menos una fecha', 'Atencion', 'warning');
 		} else {
+
 			for (let value of Object.values(this.dataGrillaFechas)) {
 				//console.log('EnviarFechaEspecifica : ', value)
 				this.fechasEspecificas.push(value.fecha.toString());
 			}
+
 			console.log('this.nombreAplicativo : ', this.nombreAplicativo);
 
 			this.dataEnvia = {
@@ -180,6 +243,7 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 				intervalo: 0,
 				fechasEspecificas: this.fechasEspecificas
 			}
+
 			console.log('this.dataEnvia : ', this.dataEnvia);
 			// se conecta al servicio
 			this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
@@ -199,8 +263,9 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 	}
 
-
-
+	checkValue(event: any) {
+		console.log(event);
+	}
 
 	ngOnInit(): void {
 
@@ -504,11 +569,18 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 			]],
 			horario: ['', [
 				Validators.required
+			]],
+			periodicidad: ['', [
+				Validators.required
 			]]
 		});
 
 
 		this.formGroupSemanal = this.fb.group({
+
+			periodicidad: ['', [
+				Validators.required
+			]],
 			nombreAplicativo: ['', [
 				Validators.required,
 				Validators.minLength(6),
@@ -642,7 +714,14 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 	// dias de la semana
 	semanachangeList(e) {
+		this.diasDelaSemanaSeleccionado = [];
 
+		for (let value of Object.values(this.diasDelaSemana)) {
+			if (value.checked) {
+				this.diasDelaSemanaSeleccionado.push(value.id.toString());
+			}
+		}
+		this.countDiasdelaSemana = this.diasDelaSemanaSeleccionado.length
 		/*
 		console.log('diasSemanaChekArray', this.formulariosemanal.get('diasSemanaChekArray'));
 	
@@ -989,14 +1068,14 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 	}
 
-
+	/*
 	ngAfterViewInit(): void {
 		// setTimeout(() => {
 		//   this.firstItem.nativeElement.focus();
 		// }, 250);
 		this.startControlMonitoring(this.form);
 	}
-
+	*/
 
 
 }
