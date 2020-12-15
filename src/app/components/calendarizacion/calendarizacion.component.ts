@@ -38,9 +38,16 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 	diasDelaSemanaSeleccionado: Array<string> = [];
 	countDiasdelaSemana: number = 0;
+
 	mesesDelAnnioSeleccionado: Array<string> = [];
+	countMesesDelAnnioSeleccionado: number = 0;
+
 	diasDelMesSeleccionado: Array<string> = [];
+	countDiasDelMesSeleccionado: number = 0;
+
 	fechasEspecificas: Array<string> = [];
+	countFechasEspecificas: number = 0;
+
 
 	//form: FormGroup;
 	nombreAplicativo: string;
@@ -101,41 +108,6 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 		this.CargaDataCombo();
 
-		/*
-		this.formulariodiario = this.fb.group({
-		  nombreAplicativo: ['', [
-			Validators.required,
-			Validators.minLength(6),
-			Validators.maxLength(15),
-			Validators.pattern('^[a-zA-Z0-9]*$')
-		  ]
-		  ],
-		  horarioAplicativo: ['', [
-			Validators.required
-		  ]
-		  ],
-	
-		})
-		*/
-
-		/*
-		this.formulariosemanal = this.fb.group({
-		  nombreAplicativo: ['',
-			[
-			  Validators.required,
-			  Validators.minLength(6),
-			  Validators.maxLength(15),
-			  Validators.pattern('^[a-zA-Z0-9]*$')
-			]
-		  ],
-		  horarioAplicativo: ['',
-			[
-			  Validators.required
-			]
-		  ],
-		})
-		*/
-
 	}
 
 	//onSubmitSemanal
@@ -159,39 +131,15 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 		this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
 			res => {
 				console.log('res de insertar : ', res);
-				swal.fire('Exito', 'Datos de ingresados', 'success');
+				swal.fire('Exito', 'Datos ingresados', 'success');
 			}
 			, err => console.error(err)
 		);
 	}
 
 	onSubmitSemanal() {
-		//console.log('formGroupSemanal : ', this.formGroupSemanal.value)
-		//this.diasDelaSemanaSeleccionado
-		//let diasSemanaChekArray: FormArray = this.formGroupSemanal.get('diasSemanaChekArray') as FormArray;
-		//this.diasDelaSemanaSeleccionado = [];
-		/*
-				for (let value of Object.values(this.diasDelaSemana)) {
-					if (value.checked) {
-						this.diasDelaSemanaSeleccionado.push(value.id.toString());
-						diasSemanaChekArray.push(
-							new FormControl(
-								value.id.toString()
-							)
-						);
-		
-					}
-				}
-				*/
-		console.log('this.diasDelaSemanaSeleccionado : ', this.diasDelaSemanaSeleccionado)
 
-
-		/*
-				const valueToStore = Object.assign({}, this.formGroupSemanal, {
-					diasSemana: this.convertToValue('diasSemana')
-				});
-				console.log('valueToStore : ', valueToStore);
-		*/
+		//console.log('this.diasDelaSemanaSeleccionado : ', this.diasDelaSemanaSeleccionado)
 		this.dataEnvia = {
 			nombreAplicativo: this.formGroupSemanal.value.nombreAplicativo,
 			codPeriodicidadProceso: this.periodicidadSeleccionada,
@@ -205,17 +153,60 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 		this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
 			res => {
 				console.log('res de insertar : ', res);
+				swal.fire('Exito', 'Datos ingresados', 'success');
 			}
 			, err => console.error(err)
 		);
 	}
 
+
 	onSubmitMensual() {
 		console.log(this.formGroupMensual.value)
+		this.dataEnvia = {
+			nombreAplicativo: this.formGroupMensual.value.nombreAplicativo,
+			codPeriodicidadProceso: this.periodicidadSeleccionada,
+			semanas: [],
+			meses: this.mesesDelAnnioSeleccionado,
+			dias: this.diasDelMesSeleccionado,
+			hora: this.formGroupMensual.value.horario,
+			intervalo: 0,
+		}
+
+
+		this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+			res => {
+				//console.log('res de insertar : ', res);
+				swal.fire('Exito', 'Datos ingresados', 'success');
+			}
+			, err => console.error(err)
+		);
 	}
 
+
 	onSubmitIntervaloHora() {
+
 		console.log(this.formGroupIntervaloHora.value)
+
+		this.dataEnvia = {
+			nombreAplicativo: this.formGroupIntervaloHora.value.nombreAplicativo,
+			codPeriodicidadProceso: this.periodicidadSeleccionada,
+			semanas: [],
+			meses: [],
+			dias: [],
+			hora: "",
+			intervalo: this.formGroupIntervaloHora.value.intervalo,
+		}
+
+		console.log('this.dataEnvia : ', this.dataEnvia);
+
+		this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+			res => {
+				console.log('res de insertar : ', res);
+				//console.log('res de insertar : ', res);
+				swal.fire('Exito', 'Datos ingresados', 'success');
+			}
+			, err => console.error(err)
+		);
 	}
 
 	onSubmitFechaEspecifica() {
@@ -234,7 +225,7 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 			console.log('this.nombreAplicativo : ', this.nombreAplicativo);
 
 			this.dataEnvia = {
-				nombreAplicativo: this.nombreAplicativo,
+				nombreAplicativo: this.formGroupFechaEspecifica.value.nombreAplicativo,
 				codPeriodicidadProceso: this.periodicidadSeleccionada,
 				semanas: this.diasDelaSemanaSeleccionado,
 				meses: [],
@@ -598,6 +589,10 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 
 		this.formGroupMensual = this.fb.group({
+
+			periodicidad: ['', [
+				Validators.required
+			]],
 			nombreAplicativo: ['', [
 				Validators.required,
 				Validators.minLength(6),
@@ -606,27 +601,20 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 			]],
 			horario: ['', [
 				Validators.required
-			]],
-			meses: this.fb.array(
-				this.mesesDelAnnio.map(() => this.fb.control('')),
-				CustomValidators.multipleCheckboxRequireOne
-			),
-			dias: this.fb.array(
-				this.diasDelMes.map(() => this.fb.control('')),
-				CustomValidators.multipleCheckboxRequireOne
-			)
+			]]
 		});
 
 
 		this.formGroupIntervaloHora = this.fb.group({
+
+			periodicidad: ['', [
+				Validators.required
+			]],
 			nombreAplicativo: ['', [
 				Validators.required,
 				Validators.minLength(6),
 				Validators.maxLength(15),
 				Validators.pattern('^[a-zA-Z0-9]*$')
-			]],
-			horario: ['', [
-				Validators.required
 			]],
 			intervalo: ['', [
 				Validators.required
@@ -636,6 +624,10 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 
 		this.formGroupFechaEspecifica = this.fb.group({
+
+			periodicidad: ['', [
+				Validators.required
+			]],
 			nombreAplicativo: ['', [
 				Validators.required,
 				Validators.minLength(6),
@@ -722,26 +714,6 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 			}
 		}
 		this.countDiasdelaSemana = this.diasDelaSemanaSeleccionado.length
-		/*
-		console.log('diasSemanaChekArray', this.formulariosemanal.get('diasSemanaChekArray'));
-	
-		let diasSemanaChekArray: FormArray = this.formulariosemanal.get('diasSemanaChekArray') as FormArray;
-		this.diasDelaSemanaSeleccionado = [];
-	
-		for (let value of Object.values(this.diasDelaSemana)) {
-		  if (value.checked) {
-			this.diasDelaSemanaSeleccionado.push(value.id.toString());
-			diasSemanaChekArray.push(
-			  new FormControl(
-				value.id.toString()
-			  )
-			);
-	
-		  }
-		}
-		console.log('diasSemanaChekArray : ', diasSemanaChekArray.value);
-	   */
-
 
 	}
 
@@ -754,6 +726,7 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 				this.mesesDelAnnioSeleccionado.push(value.id.toString());
 			}
 		}
+		this.countMesesDelAnnioSeleccionado = this.mesesDelAnnioSeleccionado.length
 	}
 
 	// dias del mes
@@ -765,6 +738,7 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 				this.diasDelMesSeleccionado.push(value.id.toString());
 			}
 		}
+		this.countDiasDelMesSeleccionado = this.diasDelMesSeleccionado.length
 	}
 
 
