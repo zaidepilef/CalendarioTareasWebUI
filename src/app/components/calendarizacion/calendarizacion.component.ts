@@ -1042,14 +1042,6 @@ export class CalendarizacionComponent extends FormComponentBase implements OnIni
 
 	}
 
-	/*
-	ngAfterViewInit(): void {
-		// setTimeout(() => {
-		//   this.firstItem.nativeElement.focus();
-		// }, 250);
-		this.startControlMonitoring(this.form);
-	}
-	*/
 
 
 }

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { CalendarioService } from 'src/app/services/calendario.service';
+import { CustomValidators } from './custom.validators';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editar-tarea',
@@ -32,9 +34,16 @@ export class EditarTareaComponent implements OnInit {
 
 
   diasDelaSemanaSeleccionado: Array<string> = [];
+  countDiasdelaSemana: number = 0;
+
   mesesDelAnnioSeleccionado: Array<string> = [];
+  countMesesDelAnnioSeleccionado: number = 0;
+
   diasDelMesSeleccionado: Array<string> = [];
+  countDiasDelMesSeleccionado: number = 0;
+
   fechasEspecificas: Array<string> = [];
+  countFechasEspecificas: number = 0;
 
   form: FormGroup;
   response: any = {
@@ -52,6 +61,22 @@ export class EditarTareaComponent implements OnInit {
 
   //objeto al API
   dataEnvia: any = {}
+
+  formulariodiario: boolean;
+  formGroupDiario: FormGroup;
+
+  formulariosemanal: boolean;
+  formGroupSemanal: FormGroup;
+
+  formulariomensual: boolean;
+  formGroupMensual: FormGroup;
+
+  formulariointervalohora: boolean;
+  formGroupIntervaloHora: FormGroup;
+
+  formulariofechaespecifica: boolean;
+  formGroupFechaEspecifica: FormGroup;
+
 
   constructor(private fb: FormBuilder, private activatedRoute: ActivatedRoute, private service: CalendarioService, private router: Router) {
 
@@ -333,6 +358,80 @@ export class EditarTareaComponent implements OnInit {
     let params: any = this.activatedRoute.snapshot.params;
     this.idTareaProgramada = Number(params.id)
     this.BuscaDataTarea(params.id);
+
+
+    this.formGroupDiario = this.fb.group({
+      nombreAplicativo: ['', [
+        Validators.required
+      ]],
+      horario: ['', [
+        Validators.required
+      ]],
+      periodicidad: ['', [
+        Validators.required
+      ]]
+    });
+
+
+    this.formGroupSemanal = this.fb.group({
+
+      periodicidad: ['', [
+        Validators.required
+      ]],
+      nombreAplicativo: ['', [
+        Validators.required
+      ]],
+      horario: ['', [
+        Validators.required
+      ]]
+    });
+
+
+    this.formGroupMensual = this.fb.group({
+
+      periodicidad: ['', [
+        Validators.required
+      ]],
+      nombreAplicativo: ['', [
+        Validators.required
+      ]],
+      horario: ['', [
+        Validators.required
+      ]]
+    });
+
+
+    this.formGroupIntervaloHora = this.fb.group({
+
+      periodicidad: ['', [
+        Validators.required
+      ]],
+      nombreAplicativo: ['', [
+        Validators.required
+      ]],
+      intervalo: ['', [
+        Validators.required
+      ]],
+
+    });
+
+
+    this.formGroupFechaEspecifica = this.fb.group({
+
+      periodicidad: ['', [
+        Validators.required
+      ]],
+      nombreAplicativo: ['', [
+        Validators.required
+      ]],
+      horario: ['', [
+        Validators.required
+      ]],
+
+
+    });
+
+
   }
 
   FechaCambia(dateObject) {
@@ -458,92 +557,56 @@ export class EditarTareaComponent implements OnInit {
 
         if (this.periodicidadSeleccionada === 1) {
 
-          this.hora = true;
-          this.fecha = false;
-          this.intervalo = false;
-          this.semana = false;
-          this.meses = false;
-          this.dias = false;
+          this.formulariodiario = true;
 
         } else if (this.periodicidadSeleccionada === 2) {
-          this.hora = true;
-          this.fecha = false;
-          this.intervalo = false;
-          this.semana = true;
-          this.meses = false;
-          this.dias = false;
 
+          this.formulariosemanal = true;
           const diasEntrantes = this.response.semanas;
           diasEntrantes.forEach(element => {
             const objIndex = this.diasDelaSemana.findIndex((obj => obj.id == element));
             this.diasDelaSemana[objIndex].checked = true;
+            this.countDiasdelaSemana++;
           });
 
         } else if (this.periodicidadSeleccionada === 3) {
 
-          this.hora = true;
-          this.fecha = false;
-          this.intervalo = false;
-          this.semana = false;
-          this.meses = true;
-          this.dias = true;
-
+          this.formulariomensual = true;
           const mesesEntantes = this.response.meses;
           mesesEntantes.forEach(element => {
             const objIndex = this.mesesDelAnnio.findIndex((obj => obj.id == element));
             this.mesesDelAnnio[objIndex].checked = true;
+            this.countMesesDelAnnioSeleccionado++;
           });
 
           const diasEntrantes = this.response.dias;
           diasEntrantes.forEach(element => {
             const objIndex = this.diasDelMes.findIndex((obj => obj.id == element));
             this.diasDelMes[objIndex].checked = true;
+            this.countDiasDelMesSeleccionado++;
           });
 
         } else if (this.periodicidadSeleccionada === 4) {
 
-          this.hora = false;
-          this.fecha = true;
-          this.intervalo = true;
-          this.semana = false;
-          this.meses = false;
-          this.dias = false;
-          this.grillaFechas = false;
+          this.formulariointervalohora = true;
 
         } else if (this.periodicidadSeleccionada === 1002) {// fecha especifica
 
-          this.hora = true;
-          this.fecha = true;
-          this.intervalo = false;
-          this.semana = false;
-          this.meses = false;
-          this.dias = false;
-          this.grillaFechas = true;
+          this.formulariofechaespecifica = true;
 
           const listaFechas = this.response.fechasEspecificas;
           const temp = [];
           let countGrilla = listaFechas.length;
-
           listaFechas.forEach(fech => {
             temp.push({
               id: countGrilla++,
               fecha: fech
             });
+            this.countFechasEspecificas++;
           });
-
           this.dataGrillaFechas = temp;
-
           console.log('temp despues : ', temp);
-
-
         } else {
-
-          this.hora = false;
-          this.fecha = true;
-          this.intervalo = false;
-          this.semana = false;
-          this.meses = false;
-          this.dias = false;
 
         }
       }
@@ -569,8 +632,6 @@ export class EditarTareaComponent implements OnInit {
 
   }
 
-
-
   // dias de la semana
   semanachangeList() {
     this.diasDelaSemanaSeleccionado = [];
@@ -580,6 +641,7 @@ export class EditarTareaComponent implements OnInit {
         this.diasDelaSemanaSeleccionado.push(value.id.toString());
       }
     }
+    this.countDiasdelaSemana = this.diasDelaSemanaSeleccionado.length
   }
 
   // meses del año
@@ -591,6 +653,7 @@ export class EditarTareaComponent implements OnInit {
         this.mesesDelAnnioSeleccionado.push(value.id.toString());
       }
     }
+    this.countMesesDelAnnioSeleccionado = this.mesesDelAnnioSeleccionado.length
   }
 
   // dias del mes
@@ -602,153 +665,176 @@ export class EditarTareaComponent implements OnInit {
         this.diasDelMesSeleccionado.push(value.id.toString());
       }
     }
-  }
-
-
-
-  Guardar() {
-
-    if (this.periodicidadSeleccionada === 1) {
-      this.GuardarDiario()
-    } else if (this.periodicidadSeleccionada === 2) {
-      this.GuardarSemanal()
-    } else if (this.periodicidadSeleccionada === 3) {
-      this.GuardarMensual()
-    } else if (this.periodicidadSeleccionada === 4) {
-      this.GuardarIntervalo()
-    } else if (this.periodicidadSeleccionada === 1002) {
-      this.GuardarFechaEspecifica()
-    } else {
-
-    }
-
-  }
-
-
-  GuardarDiario() {
-    this.dataEnvia = {
-      idTareaProgramada: this.idTareaProgramada,
-      nombreAplicativo: this.nombreAplicativo,
-      codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semana: this.diasDelaSemanaSeleccionado,
-      meses: [],
-      dias: [],
-      hora: this.horario,
-      intervalo: 0,
-    }
-
-
-    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
-      res => {
-        console.log('res de insertar : ', res);
-      }
-      , err => console.error(err)
-    );
-  }
-
-
-  GuardarSemanal() {
-    this.dataEnvia = {
-      idTareaProgramada: this.idTareaProgramada,
-      nombreAplicativo: this.nombreAplicativo,
-      codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semanas: this.diasDelaSemanaSeleccionado,
-      meses: [],
-      dias: [],
-      hora: this.horario,
-      intervalo: 0,
-    }
-
-
-    this.service.editartareasprogramadas(this.dataEnvia).subscribe(
-      res => {
-        console.log('res de insertar : ', res);
-      }
-      , err => console.error(err)
-    );
-
-  }
-
-
-  GuardarMensual() {
-    console.log('this.mesesDelAnnioSeleccionado : ', this.mesesDelAnnioSeleccionado)
-    console.log('this.diasDelMesSeleccionado : ', this.diasDelMesSeleccionado)
-    this.dataEnvia = {
-      idTareaProgramada: this.idTareaProgramada,
-      nombreAplicativo: this.nombreAplicativo,
-      codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semanas: [],
-      meses: this.mesesDelAnnioSeleccionado,
-      dias: this.diasDelMesSeleccionado,
-      hora: this.horario,
-      intervalo: 0,
-    }
-
-
-    this.service.editartareasprogramadas(this.dataEnvia).subscribe(
-      res => {
-        console.log('res de insertar : ', res);
-      }
-      , err => console.error(err)
-    );
-
-  }
-
-
-  GuardarIntervalo() {
-    this.dataEnvia = {
-      idTareaProgramada: this.idTareaProgramada,
-      nombreAplicativo: this.nombreAplicativo,
-      codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semanas: [],
-      meses: [],
-      dias: [],
-      hora: "",
-      intervalo: this.numeroIntervalo,
-    }
-
-    this.service.editartareasprogramadas(this.dataEnvia).subscribe(
-      res => {
-        console.log('res de insertar : ', res);
-      }
-      , err => console.error(err)
-    );
-
-
-  }
-
-
-  GuardarFechaEspecifica() {
-
-    for (let value of Object.values(this.dataGrillaFechas)) {
-      this.fechasEspecificas.push(value.fecha.toString());
-    }
-
-    this.dataEnvia = {
-      idTareaProgramada: this.idTareaProgramada,
-      nombreAplicativo: this.nombreAplicativo,
-      codPeriodicidadProceso: this.periodicidadSeleccionada,
-      semanas: this.diasDelaSemanaSeleccionado,
-      meses: [],
-      dias: [],
-      hora: this.horario,
-      intervalo: 0,
-      fechasEspecificas: this.fechasEspecificas
-    }
-
-    this.service.editartareasprogramadas(this.dataEnvia).subscribe(
-      res => {
-        console.log('res de insertar : ', res);
-      }
-      , err => console.error(err)
-    );
-
-
+    this.countDiasDelMesSeleccionado = this.diasDelMesSeleccionado.length
   }
 
 
   Volver() {
     this.router.navigateByUrl('/tareas');
+  }
+
+
+  //onSubmitdiario OK
+  onSubmitdiario() {
+
+    console.log(this.formGroupDiario.value)
+
+    this.dataEnvia = {
+      idTareaProgramada: this.idTareaProgramada,
+      nombreAplicativo: this.formGroupDiario.value.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      meses: [],
+      dias: [],
+      hora: this.formGroupDiario.value.horario,
+      intervalo: 0,
+    }
+    console.log('this.dataEnvia : ', this.dataEnvia);
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+        swal.fire('Exito', 'Datos ingresados', 'success');
+      }
+      , err => console.error(err)
+    );
+  }
+
+  onSubmitSemanal() {
+
+    this.dataEnvia = {
+      idTareaProgramada: this.idTareaProgramada,
+      nombreAplicativo: this.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semanas: this.diasDelaSemanaSeleccionado,
+      meses: [],
+      dias: [],
+      hora: this.horario,
+      intervalo: 0,
+    }
+
+
+    this.service.editartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+      }
+      , err => console.error(err)
+    );
+    //console.log('this.diasDelaSemanaSeleccionado : ', this.diasDelaSemanaSeleccionado)
+    this.dataEnvia = {
+      nombreAplicativo: this.formGroupSemanal.value.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semanas: this.diasDelaSemanaSeleccionado,
+      meses: [],
+      dias: [],
+      hora: this.formGroupSemanal.value.horario,
+      intervalo: 0,
+    }
+    console.log('this.dataEnvia : ', this.dataEnvia);
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+        swal.fire('Exito', 'Datos ingresados', 'success');
+      }
+      , err => console.error(err)
+    );
+  }
+
+
+  onSubmitMensual() {
+
+    console.log(this.formGroupMensual.value)
+    this.dataEnvia = {
+      idTareaProgramada: this.idTareaProgramada,
+      nombreAplicativo: this.formGroupMensual.value.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semanas: [],
+      meses: this.mesesDelAnnioSeleccionado,
+      dias: this.diasDelMesSeleccionado,
+      hora: this.formGroupMensual.value.horario,
+      intervalo: 0,
+    }
+
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        //console.log('res de insertar : ', res);
+        swal.fire('Exito', 'Datos ingresados', 'success');
+      }
+      , err => console.error(err)
+    );
+
+  }
+
+
+  onSubmitIntervaloHora() {
+  
+    console.log(this.formGroupIntervaloHora.value)
+
+    this.dataEnvia = {
+      idTareaProgramada: this.idTareaProgramada,
+      nombreAplicativo: this.formGroupIntervaloHora.value.nombreAplicativo,
+      codPeriodicidadProceso: this.periodicidadSeleccionada,
+      semanas: [],
+      meses: [],
+      dias: [],
+      hora: "",
+      intervalo: this.formGroupIntervaloHora.value.intervalo,
+    }
+
+    console.log('this.dataEnvia : ', this.dataEnvia);
+
+    this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+      res => {
+        console.log('res de insertar : ', res);
+        //console.log('res de insertar : ', res);
+        swal.fire('Exito', 'Datos ingresados', 'success');
+      }
+      , err => console.error(err)
+    );
+  }
+
+  onSubmitFechaEspecifica() {
+    
+    console.log(this.formGroupFechaEspecifica.value)
+
+    if (this.dataGrillaFechas.length == 0) {
+      swal.fire('Agregue al menos una fecha', 'Atencion', 'warning');
+    } else {
+
+      for (let value of Object.values(this.dataGrillaFechas)) {
+        //console.log('EnviarFechaEspecifica : ', value)
+        this.fechasEspecificas.push(value.fecha.toString());
+      }
+
+      console.log('this.nombreAplicativo : ', this.nombreAplicativo);
+
+      this.dataEnvia = {
+        idTareaProgramada: this.idTareaProgramada,
+        nombreAplicativo: this.formGroupFechaEspecifica.value.nombreAplicativo,
+        codPeriodicidadProceso: this.periodicidadSeleccionada,
+        semanas: this.diasDelaSemanaSeleccionado,
+        meses: [],
+        dias: [],
+        hora: this.horario,
+        intervalo: 0,
+        fechasEspecificas: this.fechasEspecificas
+      }
+
+      console.log('this.dataEnvia : ', this.dataEnvia);
+      // se conecta al servicio
+      this.service.insertartareasprogramadas(this.dataEnvia).subscribe(
+        res => {
+          console.log('res de insertar : ', res);
+          swal.fire('Exito', 'Datos de intervalo guardados', 'success');
+        }
+        , err => console.error(err)
+      );
+
+    }
+
+
+
+
+
+
   }
 
 }
