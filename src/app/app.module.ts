@@ -18,9 +18,12 @@ import { TareaprogramadaComponent } from './components/tareaprogramada/tareaprog
 import { MatTableExporterModule } from 'mat-table-exporter';
 import { EditarTareaComponent } from './components/editar-tarea/editar-tarea.component';
 import { TestvalComponent } from './components/testval/testval.component';
+import { AutocompletarComponent } from './components/autocompletar/autocompletar.component';
+import { AutoSelectValueDirective } from './directives/auto-select-value.directive';
 
 @NgModule({
   declarations: [
+    AutoSelectValueDirective,
     AppComponent,
     HomeComponent,
     CalendarizacionComponent,
@@ -29,7 +32,8 @@ import { TestvalComponent } from './components/testval/testval.component';
     HeaderComponent,
     LayoutComponent,
     TareaprogramadaComponent, EditarTareaComponent,
-    TestvalComponent
+    TestvalComponent,
+    AutocompletarComponent
   ],
   imports: [
     BrowserModule,

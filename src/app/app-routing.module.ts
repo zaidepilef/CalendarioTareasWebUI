@@ -4,6 +4,7 @@ import { CalendarizacionComponent } from './components/calendarizacion/calendari
 import { EditarTareaComponent } from './components/editar-tarea/editar-tarea.component';
 import { TareaprogramadaComponent } from './components/tareaprogramada/tareaprogramada.component';
 import { TestvalComponent } from './components/testval/testval.component';
+import { AutocompletarComponent } from './components/autocompletar/autocompletar.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 
@@ -29,6 +30,11 @@ const routes: Routes = [
     path: 'test',
     pathMatch: 'full',
     component: TestvalComponent
+  },
+  {
+    path: 'autocompletar',
+    pathMatch: 'full',
+    component: AutocompletarComponent
   },
   {
     path: '404',
