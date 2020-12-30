@@ -1,69 +1,30 @@
+<mat-card class="example-card">
 
+    <div class="margin padding" [formGroup]="myFormGroup1">
 
+        <mat-form-field color="primary">
+            <mat-label>Nombre Usuarios</mat-label>
+            <input type="text" matInput formControlName="myControl1" [matAutocomplete]="auto1" />
+            <mat-autocomplete #auto1="matAutocomplete" (optionSelected)='getPosts($event.option.value)'>
+                <mat-option *ngFor="let option of filteredOptions1 | async" [value]="option">
+                    {{ option }}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-card-content>
+
+            <button mat-raised-button color="primary" (click)="enviar()"type="button">Enviar</button>
+        </mat-card-content>
+
+    </div>
+
+</mat-card>
 <!-- Content Starts -->
 
 <div class="container-wrapper">
     <div class="container">
 
-        <!-- DropdowList Card -->
-      
-        <!-- DropdownList Card Ends -->
-
-        <!-- Form Input Cards Starts -->
-        <div class="card-wrapper autocomplete">
-            <div>
-
-                <!-- Mat Autocomplete without directive -->
-                <mat-card class="no-padding">
-
-
-    
-                    <mat-divider></mat-divider>
-
-
-                    <mat-card-content>
-                        <div class="margin padding" [formGroup]="myFormGroup1">
-                            <mat-form-field color="primary">
-                                <input type="text" placeholder="Enter Name" matInput formControlName="myControl1"
-                                    [matAutocomplete]="auto1"/>
-                                <mat-autocomplete #auto1="matAutocomplete">
-                                    <mat-option *ngFor="let option of filteredOptions1 | async" [value]="option">
-                                        {{ option }}
-                                    </mat-option>
-                                </mat-autocomplete>
-                            </mat-form-field>
-                        </div>
-                    </mat-card-content>
-                </mat-card>
-
-                <!-- Mat Autocomplete with Directive -->
-                <mat-card class="no-padding">
-
-                    <mat-divider></mat-divider>
-                    <mat-card-content>
-                        <div class="margin padding" [formGroup]="myFormGroup2">
-                            <mat-form-field color="primary">
-                                <input type="text" placeholder="Enter Name" matInput formControlName="myControl2" [matAutocomplete]="auto2"
-                                    appAutoSelectValue [dropdownList]="filteredOptions2" />
-                                <mat-autocomplete #auto2="matAutocomplete">
-                                    <mat-option *ngFor="let option of filteredOptions2"[value]="option">
-                                        {{ option }}
-                                    </mat-option>
-                                </mat-autocomplete>
-                                <mat-error *ngIf="myFormGroup2.controls.myControl2.hasError('required')">
-                                    Name is Required
-                                </mat-error>
-                                <mat-error *ngIf="myFormGroup2.controls.myControl2.hasError('noOption')">
-                                    Name not Found
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                       
-                    </mat-card-content>
-                </mat-card>
-            </div>
-        </div>
-        <!-- Form Input Card Ends Here -->
     </div>
 </div>
 

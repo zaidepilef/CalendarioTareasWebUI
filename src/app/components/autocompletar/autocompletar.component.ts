@@ -25,11 +25,14 @@ export class AutocompletarComponent implements OnInit {
 	dropdownList = [];
 
 
+	nombreCompletoSelected: string;
+	codUsuarioSelected: string;
 	response: any = [{}]
 	myFormGroup1: FormGroup;
 	myFormGroup2: FormGroup;
 	filteredOptions1: Observable<string[]>;
 	filteredOptions2: Set<string>;
+
 
 	constructor(private service: CalendarioService) {
 		this.myFormGroup1 = new FormGroup({
@@ -60,6 +63,21 @@ export class AutocompletarComponent implements OnInit {
 			, err => console.error(err)
 		);
 
+	}
+
+
+	getPosts(userId) {
+		console.log('userId : ', userId);
+		let userSelected = this.response.filter((resp) => resp.nombreCompleto == userId)[0]
+		console.log('userSelected : ', userSelected)
+		this.codUsuarioSelected = userSelected.codUsuario;
+		this.nombreCompletoSelected = userSelected.nombreCompleto;
+
+	}
+
+	enviar(){
+		console.log('codUsuarioSelected : ',this.codUsuarioSelected)
+		console.log('nombreCompletoSelected : ',this.nombreCompletoSelected)
 	}
 
 
