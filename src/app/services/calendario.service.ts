@@ -40,4 +40,9 @@ export class CalendarioService {
 		return this.httpClient.get(`${environment.API_URL}/calendariotareasprogramadas/listartipoperiodicidad/`);
 	}
 
+	
+	public listarusuarios() {
+		return this.httpClient.get(`${environment.API_URL}/calendariotareasprogramadas/listarusuarios/`);
+	}
+
 }

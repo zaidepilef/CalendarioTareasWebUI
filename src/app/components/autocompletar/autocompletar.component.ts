@@ -8,6 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { CalendarioService } from 'src/app/services/calendario.service';
 
 @Component({
 	selector: 'app-autocompletar',
@@ -21,35 +22,16 @@ export class AutocompletarComponent implements OnInit {
 	autoCompleteTrigger: MatAutocompleteTrigger;
 	title = 'CustomAutocomplete';
 
-	dropdownList = [
-		'Kerstin',
-		'Sanjuanita',
-		'Jami',
-		'Jazmine',
-		'Ollie',
-		'Sylvia',
-		'Noel',
-		'Dillon',
-		'Ramiro',
-		'Nakesha',
-		'Telma',
-		'Tracie',
-		'Sherice',
-		'Russel',
-		'Sharmaine',
-		'Sheron',
-		'Candy',
-		'Krystin',
-		'Laree',
-		'Boyce',
-	];
+	dropdownList = [];
 
+
+	response: any = [{}]
 	myFormGroup1: FormGroup;
 	myFormGroup2: FormGroup;
 	filteredOptions1: Observable<string[]>;
 	filteredOptions2: Set<string>;
 
-	constructor() {
+	constructor(private service: CalendarioService) {
 		this.myFormGroup1 = new FormGroup({
 			myControl1: new FormControl(),
 		});
@@ -59,7 +41,28 @@ export class AutocompletarComponent implements OnInit {
 				this.optionNotFound.bind(this),
 			]),
 		});
+
+		this.CargaDataCombo();
 	}
+
+	CargaDataCombo() {
+
+		this.service.listarusuarios().subscribe(
+			res => {
+				this.response = res;
+				console.log('this.response : ', this.response);
+
+				this.response.forEach(obj => {
+					console.log('obj : ', obj);
+					this.dropdownList.push(obj.nombreCompleto)
+				});
+			}
+			, err => console.error(err)
+		);
+
+	}
+
+
 
 	ngOnInit() {
 		// Mat Autocomplete function
@@ -76,6 +79,11 @@ export class AutocompletarComponent implements OnInit {
 		return this.dropdownList.filter(
 			(option) => option.toLowerCase().indexOf(filterValue) === 0
 		);
+		/*
+		return this.dropdownList.filter(
+			(option) => option.toLowerCase().indexOf(filterValue) === 0
+		);
+		*/
 	}
 
 
@@ -93,4 +101,6 @@ export class AutocompletarComponent implements OnInit {
 		}
 		return null;
 	}
+
+
 }
